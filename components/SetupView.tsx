@@ -14,6 +14,57 @@ interface SetupViewProps {
   setAppMode: (mode: AppMode) => void;
 }
 
+// Generate a festive placeholder image (Data URI)
+const getPlaceholderImage = (id: string) => {
+  // Simple hash to generate consistent random properties
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Random Hue for Gradient
+  const hue = Math.abs(hash) % 360;
+  const color1 = `hsl(${hue}, 85%, 95%)`;
+  const color2 = `hsl(${(hue + 40) % 360}, 85%, 88%)`;
+  
+  // Random Prize Icon
+  const icons = ['🎁', '🎁', '🎁', '🎀', '🏆', '💎', '👑', '🎉', '🧧', '🧸', '🎮'];
+  const icon = icons[Math.abs(hash) % icons.length];
+
+  // Decorative Elements (Confetti/Shapes)
+  const decorations = Array.from({ length: 6 }).map((_, i) => {
+     const x = (Math.abs(hash * (i + 1)) % 80) + 10;
+     const y = (Math.abs(hash * (i + 2)) % 80) + 10;
+     const size = (Math.abs(hash * (i + 3)) % 10) + 5;
+     const opacity = 0.3;
+     const fill = `hsl(${(hue + i * 60) % 360}, 70%, 70%)`;
+     const isCircle = i % 2 === 0;
+     
+     return isCircle 
+       ? `<circle cx="${x}%" cy="${y}%" r="${size}" fill="${fill}" opacity="${opacity}" />`
+       : `<rect x="${x}%" y="${y}%" width="${size * 1.5}" height="${size * 1.5}" fill="${fill}" opacity="${opacity}" transform="rotate(45, ${x}, ${y})" />`;
+  }).join('');
+  
+  const svg = `
+    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad_${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${color1}" />
+          <stop offset="100%" stop-color="${color2}" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="200" fill="url(#grad_${id})" />
+      ${decorations}
+      <circle cx="100" cy="100" r="60" fill="white" fill-opacity="0.4" />
+      <text x="100" y="115" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif" font-size="90" text-anchor="middle" dominant-baseline="middle">${icon}</text>
+    </svg>
+  `;
+  
+  // Encode SVG to Base64 (handling Unicode for emojis)
+  const base64 = btoa(unescape(encodeURIComponent(svg)));
+  return `data:image/svg+xml;base64,${base64}`;
+};
+
 export const SetupView: React.FC<SetupViewProps> = ({
   participants,
   setParticipants,
@@ -28,9 +79,15 @@ export const SetupView: React.FC<SetupViewProps> = ({
 
   const addPrize = () => {
     if (!newPrizeName.trim()) return;
+    
+    const id = crypto.randomUUID();
+    // Generate a festive SVG placeholder
+    const randomPatternUrl = getPlaceholderImage(id);
+
     const newPrize: Prize = {
-      id: crypto.randomUUID(),
+      id: id,
       name: newPrizeName.trim(),
+      imageUrl: randomPatternUrl
     };
     setPrizes(prev => [...prev, newPrize]);
     setNewPrizeName('');
@@ -42,10 +99,16 @@ export const SetupView: React.FC<SetupViewProps> = ({
 
   const generateImages = async () => {
     setIsGenerating(true);
-    const prizesWithoutImages = prizes.filter(p => !p.imageUrl);
+    
+    // Target prizes that have no image OR have placeholder image (SVG or DiceBear)
+    const prizesToUpdate = prizes.filter(p => 
+      !p.imageUrl || 
+      p.imageUrl.includes('api.dicebear.com') ||
+      p.imageUrl.includes('image/svg+xml')
+    );
     
     const updates = await Promise.all(
-      prizesWithoutImages.map(async (prize) => {
+      prizesToUpdate.map(async (prize) => {
         const url = await generatePrizeImage(prize.name);
         return { id: prize.id, url };
       })
@@ -70,6 +133,13 @@ export const SetupView: React.FC<SetupViewProps> = ({
     // Gift Exchange: Need at least 2 people to exchange
     canStart = participantCount >= 2;
   }
+
+  // Count how many items are using placeholders (to show appropriate button text)
+  const placeholderCount = prizes.filter(p => 
+    !p.imageUrl || 
+    p.imageUrl.includes('api.dicebear.com') ||
+    p.imageUrl.includes('image/svg+xml')
+  ).length;
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 lg:p-8 flex flex-col items-center">
@@ -182,10 +252,11 @@ export const SetupView: React.FC<SetupViewProps> = ({
                 variant="secondary" 
                 onClick={generateImages} 
                 isLoading={isGenerating}
-                disabled={prizes.length === 0}
+                disabled={prizes.length === 0 || placeholderCount === 0}
                 className="flex-1"
+                title={placeholderCount === 0 ? "All images are already generated" : "Replace default patterns with AI images"}
               >
-                Auto-Generate Images
+                {placeholderCount > 0 ? `Generate ${placeholderCount} AI Images` : 'All Images Generated'}
               </Button>
             )}
             
