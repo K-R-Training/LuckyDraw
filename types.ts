@@ -6,6 +6,7 @@ export interface Prize {
 }
 
 export enum AppState {
+  DASHBOARD = 'DASHBOARD',
   SETUP = 'SETUP',
   DRAWING = 'DRAWING',
   FINISHED = 'FINISHED'

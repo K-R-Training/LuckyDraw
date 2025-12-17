@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { SetupView } from './components/SetupView';
 import { DrawingView } from './components/DrawingView';
 import { ResultsView } from './components/ResultsView';
+import { DashboardView } from './components/DashboardView';
 import { Prize, AppState, AppMode } from './types';
 
 export default function App() {
-  const [view, setView] = useState<AppState>(AppState.SETUP);
+  const [view, setView] = useState<AppState>(AppState.DASHBOARD);
   const [appMode, setAppMode] = useState<AppMode>(AppMode.STANDARD);
   
   const [participants, setParticipants] = useState<string>('');
@@ -14,6 +15,12 @@ export default function App() {
 
   // Used for Gift Exchange to hold the temporary number prizes
   const [activeSessionPrizes, setActiveSessionPrizes] = useState<Prize[]>([]);
+
+  const handleSelectTool = (toolName: string) => {
+    if (toolName === 'LUCKY_DRAW') {
+      setView(AppState.SETUP);
+    }
+  };
 
   const handleStartDraw = () => {
     if (appMode === AppMode.GIFT_EXCHANGE) {
@@ -42,29 +49,51 @@ export default function App() {
     // Note: We don't clear participants or manual prizes here
   };
 
+  const handleGoHome = () => {
+    setView(AppState.DASHBOARD);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900 flex flex-col">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 transition-all">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-pink-500' : 'bg-indigo-600'}`}>
-              L
+          <div className="flex items-center gap-3 cursor-pointer" onClick={handleGoHome}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold bg-slate-800 shadow-md`}>
+              KR
             </div>
-            <h1 className={`text-xl font-bold bg-clip-text text-transparent ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-gradient-to-r from-pink-600 to-rose-500' : 'bg-gradient-to-r from-indigo-600 to-purple-600'}`}>
-              LuckyGen
+            <h1 className="text-xl font-bold text-slate-800">
+              K-R-Trainning
+              {view !== AppState.DASHBOARD && (
+                 <span className="font-normal text-slate-400 ml-2 text-base">
+                    / 幸運抽獎
+                 </span>
+              )}
             </h1>
           </div>
-          <div className="text-sm font-medium text-slate-500">
-             {view === AppState.SETUP && 'Setup'}
-             {view === AppState.DRAWING && (appMode === AppMode.GIFT_EXCHANGE ? 'Exchange...' : 'Drawing...')}
-             {view === AppState.FINISHED && 'Results'}
+          
+          <div className="flex items-center gap-4">
+             {view !== AppState.DASHBOARD && (
+                <button 
+                  onClick={handleGoHome}
+                  className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                  </svg>
+                  Home
+                </button>
+             )}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
+        {view === AppState.DASHBOARD && (
+          <DashboardView onSelectTool={handleSelectTool} />
+        )}
+
         {view === AppState.SETUP && (
           <SetupView 
             participants={participants}
@@ -97,7 +126,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="py-6 text-center text-slate-400 text-sm">
-        <p>Powered by Google Gemini AI</p>
+        <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini AI</p>
       </footer>
     </div>
   );

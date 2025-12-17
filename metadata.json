@@ -1,5 +1,5 @@
 {
-  "name": "LuckyGen AI Drawer",
-  "description": "A smart lucky draw application where you input participants and prizes. The AI automatically generates festive visuals for your prizes before you start the excitement of the draw.",
+  "name": "K-R-Trainning Tools",
+  "description": "Custom dashboard for K-R-Trainning containing lucky draw and other utilities.",
   "requestFramePermissions": []
 }
