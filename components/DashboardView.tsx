@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from './Button';
 
 interface DashboardViewProps {
   onSelectTool: (toolName: string) => void;
@@ -28,7 +27,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
         
-        {/* Tool 1: Lucky Draw (Active) */}
+        {/* Tool 1: Lucky Draw */}
         <div 
           onClick={() => onSelectTool('LUCKY_DRAW')}
           className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-indigo-200/50 border border-slate-100 hover:border-indigo-100 transition-all duration-300 cursor-pointer overflow-hidden"
@@ -36,7 +35,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <svg className="w-32 h-32 text-indigo-600 transform rotate-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
           </div>
-          
           <div className="relative z-10">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform">
               <span className="text-3xl">🎰</span>
@@ -53,7 +51,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 2: Smart Study Plan (Internal Navigation) */}
+        {/* Tool 2: Smart Study Plan */}
         <div 
           onClick={() => onSelectTool('STUDY_PLAN')}
           className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-emerald-200/50 border border-slate-100 hover:border-emerald-100 transition-all duration-300 cursor-pointer overflow-hidden"
@@ -63,7 +61,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
               <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
             </svg>
           </div>
-          
           <div className="relative z-10">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform">
               <span className="text-3xl">📝</span>
@@ -80,19 +77,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 3: Under Development */}
-         <div className="relative bg-slate-50 rounded-3xl p-8 border border-dashed border-slate-300 flex flex-col items-start opacity-75 select-none">
-          <div className="w-14 h-14 rounded-2xl bg-slate-200 flex items-center justify-center text-slate-400 mb-6">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+        {/* Tool 3: Nano Banana Prompts */}
+        <div 
+          onClick={() => onSelectTool('NANO_PROMPTS')}
+          className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-orange-200/50 border border-slate-100 hover:border-orange-100 transition-all duration-300 cursor-pointer overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <svg className="w-32 h-32 text-orange-600 transform rotate-12" fill="currentColor" viewBox="0 0 24 24">
+               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
           </div>
-          <h3 className="text-2xl font-bold text-slate-400 mb-2">
-            待開發
-          </h3>
-          <p className="text-slate-400 mb-6">
-             更多精彩工具正在開發中，敬請期待...
-          </p>
-          <div className="px-3 py-1 bg-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider rounded-full">
-            Coming Soon
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform">
+              <span className="text-3xl">🍌</span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-orange-600 transition-colors">
+              Nano Banana 提示詞
+            </h3>
+            <p className="text-slate-500 mb-6 leading-relaxed">
+              精選 Nano Banana (Gemini 2.5 Flash Image) 常用提示詞，涵蓋多種藝術風格，點擊即複製。
+            </p>
+            <div className="flex items-center text-orange-600 font-bold group-hover:translate-x-2 transition-transform">
+              查看詞庫 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </div>
           </div>
         </div>
 

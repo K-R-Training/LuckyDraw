@@ -10,7 +10,8 @@ export enum AppState {
   SETUP = 'SETUP',
   DRAWING = 'DRAWING',
   FINISHED = 'FINISHED',
-  STUDY_PLAN = 'STUDY_PLAN'
+  STUDY_PLAN = 'STUDY_PLAN',
+  NANO_PROMPTS = 'NANO_PROMPTS'
 }
 
 export enum AppMode {

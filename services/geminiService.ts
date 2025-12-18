@@ -22,9 +22,6 @@ export const generatePrizeImage = async (prizeName: string): Promise<string | nu
           },
         ],
       },
-      config: {
-         // config for image generation if needed, but defaults work well for flash-image
-      }
     });
 
     for (const part of response.candidates?.[0]?.content?.parts || []) {
@@ -37,6 +34,49 @@ export const generatePrizeImage = async (prizeName: string): Promise<string | nu
     return null;
   } catch (error) {
     console.error("Error generating image:", error);
+    return null;
+  }
+};
+
+/**
+ * Transforms a user-provided image into a specific style using Gemini 2.5 Flash Image.
+ */
+export const transformImageStyle = async (base64Data: string, mimeType: string, prompt: string): Promise<string | null> => {
+  if (!apiKey) {
+    console.warn("No API Key found");
+    return null;
+  }
+
+  try {
+    // Strip header if present
+    const base64Content = base64Data.split(',')[1] || base64Data;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [
+          {
+            inlineData: {
+              data: base64Content,
+              mimeType: mimeType
+            }
+          },
+          {
+            text: `Transform the person in this image into the following style: ${prompt}. Maintain the person's core features like glasses and expression, but fully adopt the artistic style described. Output only the final stylized image.`
+          }
+        ]
+      }
+    });
+
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        return `data:image/png;base64,${part.inlineData.data}`;
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error transforming image:", error);
     return null;
   }
 };

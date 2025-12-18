@@ -3,6 +3,7 @@ import { SetupView } from './components/SetupView';
 import { DrawingView } from './components/DrawingView';
 import { ResultsView } from './components/ResultsView';
 import { DashboardView } from './components/DashboardView';
+import { NanoPromptsView } from './components/NanoPromptsView';
 import { Prize, AppState, AppMode } from './types';
 
 export default function App() {
@@ -21,6 +22,8 @@ export default function App() {
       setView(AppState.SETUP);
     } else if (toolName === 'STUDY_PLAN') {
       setView(AppState.STUDY_PLAN);
+    } else if (toolName === 'NANO_PROMPTS') {
+      setView(AppState.NANO_PROMPTS);
     }
   };
 
@@ -55,6 +58,7 @@ export default function App() {
   const getSubTitle = () => {
     if (view === AppState.DASHBOARD) return null;
     if (view === AppState.STUDY_PLAN) return '智慧考前複習計畫';
+    if (view === AppState.NANO_PROMPTS) return 'Nano Banana 提示詞';
     return '幸運抽獎';
   };
 
@@ -93,8 +97,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content - Flex-1 will take remaining height */}
-      <main className={`flex-1 w-full ${view === AppState.STUDY_PLAN ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+      {/* Main Content */}
+      <main className={`flex-1 w-full ${(view === AppState.STUDY_PLAN || view === AppState.NANO_PROMPTS) ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         {view === AppState.DASHBOARD && (
           <DashboardView onSelectTool={handleSelectTool} />
         )}
@@ -139,8 +143,14 @@ export default function App() {
           </div>
         )}
 
-        {/* Inner Footer - Only show when not in study plan to maximize space */}
-        {view !== AppState.STUDY_PLAN && (
+        {view === AppState.NANO_PROMPTS && (
+          <div className="w-full h-full overflow-y-auto bg-slate-50">
+            <NanoPromptsView />
+          </div>
+        )}
+
+        {/* Inner Footer */}
+        {view !== AppState.STUDY_PLAN && view !== AppState.NANO_PROMPTS && (
           <footer className="py-8 text-center text-slate-400 text-sm mt-auto">
             <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini AI</p>
           </footer>
