@@ -6,10 +6,6 @@ interface DashboardViewProps {
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) => {
-  const handleExternalLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <div className="w-full max-w-6xl mx-auto p-4 lg:p-12 flex flex-col items-center animate-[fadeIn_0.5s_ease-out]">
       
@@ -57,9 +53,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 2: Smart Study Plan (External Link) */}
+        {/* Tool 2: Smart Study Plan (Internal Navigation) */}
         <div 
-          onClick={() => handleExternalLink('https://study-plan-9vz7.vercel.app/')}
+          onClick={() => onSelectTool('STUDY_PLAN')}
           className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-emerald-200/50 border border-slate-100 hover:border-emerald-100 transition-all duration-300 cursor-pointer overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -79,7 +75,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
               AI 助你規劃最高效的考前衝刺！輸入考科與剩餘天數，自動生成專屬複習進度表。
             </p>
             <div className="flex items-center text-emerald-600 font-bold group-hover:translate-x-2 transition-transform">
-              開始規劃 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+              開始規劃 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </div>
           </div>
         </div>

@@ -19,6 +19,8 @@ export default function App() {
   const handleSelectTool = (toolName: string) => {
     if (toolName === 'LUCKY_DRAW') {
       setView(AppState.SETUP);
+    } else if (toolName === 'STUDY_PLAN') {
+      setView(AppState.STUDY_PLAN);
     }
   };
 
@@ -53,6 +55,12 @@ export default function App() {
     setView(AppState.DASHBOARD);
   };
 
+  const getSubTitle = () => {
+    if (view === AppState.DASHBOARD) return null;
+    if (view === AppState.STUDY_PLAN) return '智慧考前複習計畫';
+    return '幸運抽獎';
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900 flex flex-col">
       {/* Header */}
@@ -66,7 +74,7 @@ export default function App() {
               K-R-Trainning
               {view !== AppState.DASHBOARD && (
                  <span className="font-normal text-slate-400 ml-2 text-base">
-                    / 幸運抽獎
+                    / {getSubTitle()}
                  </span>
               )}
             </h1>
@@ -89,7 +97,7 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col overflow-hidden">
         {view === AppState.DASHBOARD && (
           <DashboardView onSelectTool={handleSelectTool} />
         )}
@@ -122,12 +130,28 @@ export default function App() {
             onReset={handleReset}
           />
         )}
+
+        {view === AppState.STUDY_PLAN && (
+          <div className="flex-1 w-full bg-white relative animate-[fadeIn_0.5s_ease-out]">
+            <iframe 
+              src="https://study-plan-9vz7.vercel.app/" 
+              className="w-full h-full border-none"
+              title="智慧考前複習計畫"
+              allow="clipboard-write"
+            />
+            <div className="absolute top-2 right-4 flex items-center gap-2 pointer-events-none">
+              <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">EMBEDDED VIEW</span>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="py-6 text-center text-slate-400 text-sm">
-        <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini AI</p>
-      </footer>
+      {view !== AppState.STUDY_PLAN && (
+        <footer className="py-6 text-center text-slate-400 text-sm">
+          <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini AI</p>
+        </footer>
+      )}
     </div>
   );
 }

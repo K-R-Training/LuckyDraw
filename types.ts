@@ -9,7 +9,8 @@ export enum AppState {
   DASHBOARD = 'DASHBOARD',
   SETUP = 'SETUP',
   DRAWING = 'DRAWING',
-  FINISHED = 'FINISHED'
+  FINISHED = 'FINISHED',
+  STUDY_PLAN = 'STUDY_PLAN'
 }
 
 export enum AppMode {
