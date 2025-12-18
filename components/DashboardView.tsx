@@ -6,6 +6,10 @@ interface DashboardViewProps {
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) => {
+  const handleExternalLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto p-4 lg:p-12 flex flex-col items-center animate-[fadeIn_0.5s_ease-out]">
       
@@ -21,7 +25,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">專用小工具</span>
         </h1>
         <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-          Welcome to your personal toolkit. Select a tool below to get started.
+          您的個人化工具箱。選擇下方工具開始使用，提升效率與樂趣。
         </p>
       </div>
 
@@ -53,19 +57,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 2: Under Development */}
-        <div className="relative bg-slate-50 rounded-3xl p-8 border border-dashed border-slate-300 flex flex-col items-start opacity-75 select-none">
-          <div className="w-14 h-14 rounded-2xl bg-slate-200 flex items-center justify-center text-slate-400 mb-6">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+        {/* Tool 2: Smart Study Plan (External Link) */}
+        <div 
+          onClick={() => handleExternalLink('https://study-plan-9vz7.vercel.app/')}
+          className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-emerald-200/50 border border-slate-100 hover:border-emerald-100 transition-all duration-300 cursor-pointer overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <svg className="w-32 h-32 text-emerald-600 transform -rotate-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
           </div>
-          <h3 className="text-2xl font-bold text-slate-400 mb-2">
-            待開發
-          </h3>
-          <p className="text-slate-400 mb-6">
-            更多精彩工具正在開發中，敬請期待...
-          </p>
-          <div className="px-3 py-1 bg-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider rounded-full">
-            Coming Soon
+          
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform">
+              <span className="text-3xl">📝</span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors">
+              智慧考前複習計畫
+            </h3>
+            <p className="text-slate-500 mb-6 leading-relaxed">
+              AI 助你規劃最高效的考前衝刺！輸入考科與剩餘天數，自動生成專屬複習進度表。
+            </p>
+            <div className="flex items-center text-emerald-600 font-bold group-hover:translate-x-2 transition-transform">
+              開始規劃 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            </div>
           </div>
         </div>
 
