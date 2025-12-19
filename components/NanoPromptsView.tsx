@@ -11,55 +11,52 @@ interface PromptItem {
 }
 
 const PROMPT_DATA: PromptItem[] = [
-  // --- 大師風格庫 (24 Master Styles) ---
-  { id: 'm1', category: '大師風格庫', title: '吉卜力工作室風格 (Studio Ghibli)', tag: 'Ghibli', imageUrl: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=400&auto=format&fit=crop', prompt: 'Hand-drawn watercolor style of Studio Ghibli. Warm and lush natural background, nostalgic atmosphere, soft lighting, delicate character design with emotional depth.' },
-  { id: 'm2', category: '大師風格庫', title: '鳥山明風格 (Akira Toriyama)', tag: 'Toriyama', imageUrl: 'https://images.unsplash.com/photo-1620336655055-088d06e76fb5?q=80&w=400&auto=format&fit=crop', prompt: 'Akira Toriyama art style. Bold clean lines, unique balance between chibi and realistic, high saturation colors, blocky muscular details, and dynamic heroic posing.' },
-  { id: 'm3', category: '大師風格庫', title: '尾田榮一郎風格 (Eiichiro Oda)', tag: 'Oda', imageUrl: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=400&auto=format&fit=crop', prompt: 'One Piece style by Eiichiro Oda. Exaggerated facial expressions and proportions, vibrant color palette, high energy, thick and lively lines, adventurous spirit.' },
-  { id: 'm4', category: '大師風格庫', title: '新海誠風格 (Makoto Shinkai)', tag: 'Shinkai', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop', prompt: 'Makoto Shinkai style. Hyper-realistic backgrounds, spectacular lighting effects like lens flares and volumetric light, high saturation, crystalline transparent colors, emotive atmosphere.' },
-  { id: 'm5', category: '大師風格庫', title: 'CLAMP 風格', tag: 'CLAMP', imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=400&auto=format&fit=crop', prompt: 'CLAMP manga style. Slender and tall character proportions, highly decorative clothing and backgrounds, flowing hair, romantic and magical atmosphere.' },
-  { id: 'm6', category: '大師風格庫', title: '荒木飛呂彥風格 (Hirohiko Araki)', tag: 'Araki / JoJo', imageUrl: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?q=80&w=400&auto=format&fit=crop', prompt: 'JoJo\'s Bizarre Adventure style by Hirohiko Araki. Iconic posing (JoJo poses), bold neon color shifts, high-fashion clothing design, sharp facial shadows, and visual sound effects.' },
-  { id: 'm7', category: '大師風格庫', title: '井上雄彥風格 (Takehiko Inoue)', tag: 'Inoue', imageUrl: 'https://images.unsplash.com/photo-1502133480873-37d90c1950a4?q=80&w=400&auto=format&fit=crop', prompt: 'Takehiko Inoue realism style. Strong ink brush strokes (Sumi-e feel), precise human anatomy and movement, deep facial expressions, masterly use of negative space.' },
-  { id: 'm8', category: '大師風格庫', title: '京都動畫風格 (KyoAni)', tag: 'KyoAni', imageUrl: 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=400&auto=format&fit=crop', prompt: 'Kyoto Animation (KyoAni) style. Exquisite character design, soft pastel colors, subtle micro-expressions, "airy" atmosphere, focus on eyes and delicate movements.' },
-  { id: 'm9', category: '大師風格庫', title: 'ufotable 風格', tag: 'ufotable', imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop', prompt: 'ufotable movie-quality style. Digital effects, particle lighting, intense combat scenes, seamless 2D/3D fusion, dramatic shadows and glow.' },
-  { id: 'm10', category: '大師風格庫', title: 'TRIGGER 風格', tag: 'TRIGGER', imageUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400&auto=format&fit=crop', prompt: 'Studio TRIGGER style. Extreme dynamic distortion, high contrast color palettes, bold thick lines, imaginative mecha and character silhouettes.' },
-  { id: 'm11', category: '大師風格庫', title: '三浦建太郎風格 (Kentaro Miura)', tag: 'Miura', imageUrl: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=400&auto=format&fit=crop', prompt: 'Kentaro Miura Berserk style. Dark fantasy aesthetic, incredibly detailed ink hatching on armor and monsters, strong sense of volume and weight.' },
-  { id: 'm12', category: '大師風格庫', title: '高橋留美子風格 (Rumiko Takahashi)', tag: 'Takahashi', imageUrl: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?q=80&w=400&auto=format&fit=crop', prompt: 'Rumiko Takahashi style. Rounded faces, large expressive eyes, classic 80s/90s anime aesthetic, vibrant comedic expressions.' },
-  { id: 'm13', category: '大師風格庫', title: '手塚治虫風格 (Osamu Tezuka)', tag: 'Tezuka', imageUrl: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?q=80&w=400&auto=format&fit=crop', prompt: 'Osamu Tezuka classic manga style. Simplified curves, iconic large round eyes, expressive character silhouettes, symbolic movements.' },
-  { id: 'm14', category: '大師風格庫', title: '大友克洋風格 (Katsuhiro Otomo)', tag: 'Otomo', imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&auto=format&fit=crop', prompt: 'Katsuhiro Otomo Akira style. Realistic human proportions, dense urban background details, cinematic framing, destruction and rebirth themes.' },
-  { id: 'm15', category: '大師風格庫', title: '松本大洋風格 (Taiyo Matsumoto)', tag: 'Matsumoto', imageUrl: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?q=80&w=400&auto=format&fit=crop', prompt: 'Taiyo Matsumoto avant-garde style. Free and distorted lines, surreal compositions, raw emotional tension, unconventional perspective shifts.' },
-  { id: 'm16', category: '大師風格庫', title: '天野喜孝風格 (Yoshitaka Amano)', tag: 'Amano', imageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=400&auto=format&fit=crop', prompt: 'Yoshitaka Amano ethereal style. Calligraphy-like flowing lines, dreamlike fantasy elements, intricate decorative patterns, slender characters.' },
-  { id: 'm17', category: '大師風格庫', title: '弐瓶勉風格 (Tsutomu Nihei)', tag: 'Nihei', imageUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400&auto=format&fit=crop', prompt: 'Tsutomu Nihei BLAME! style. Massive architectural structures, post-apocalyptic desolation, biomechanical design, heavy black/white contrast.' },
-  { id: 'm18', category: '大師風格庫', title: '士郎正宗風格 (Masamune Shirow)', tag: 'Shirow', imageUrl: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400&auto=format&fit=crop', prompt: 'Masamune Shirow Ghost in the Shell style. Precise mechanical settings, strong female leads, cyberpunk aesthetic, detailed technological annotations.' },
-  { id: 'm19', category: '大師風格庫', title: '永野護風格 (Mamoru Nagano)', tag: 'Nagano', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=400&auto=format&fit=crop', prompt: 'Mamoru Nagano style. Slender characters and Mortar Headd mecha, complex baroque-inspired design, fusion of gothic and art deco.' },
-  { id: 'm20', category: '大師風格庫', title: '渡邊信一郎風格 (Shinichiro Watanabe)', tag: 'Watanabe', imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', prompt: 'Shinichiro Watanabe style. Cinematic realism, fusion of music (Jazz/Hip-hop) and visual vibe, fluid action choreography, cool atmosphere.' },
-  { id: 'm21', category: '大師風格庫', title: '湯淺政明風格 (Masaaki Yuasa)', tag: 'Yuasa', imageUrl: 'https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?q=80&w=400&auto=format&fit=crop', prompt: 'Masaaki Yuasa style. Free-spirited lines and distorted perspectives, vivid and unconventional color schemes, stream-of-consciousness visual storytelling.' },
+  // --- 27 日本動漫大師風格 (Master Styles) ---
+  { id: 'm1', category: '大師風格庫', title: '吉卜力工作室風格 (Studio Ghibli)', tag: 'Ghibli', imageUrl: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=400&auto=format&fit=crop', prompt: 'Studio Ghibli style. Hand-drawn watercolor textures, lush detailed natural backgrounds, warm nostalgic atmosphere, soft lighting, emotive characters.' },
+  { id: 'm2', category: '大師風格庫', title: '鳥山明風格 (Akira Toriyama)', tag: 'Toriyama', imageUrl: 'https://images.unsplash.com/photo-1620336655055-088d06e76fb5?q=80&w=400&auto=format&fit=crop', prompt: 'Akira Toriyama art style. Powerful clean lines, high saturation colors, blocky muscular anatomy, dynamic poses, mechanical/biological hybrid designs.' },
+  { id: 'm3', category: '大師風格庫', title: '尾田榮一郎風格 (Eiichiro Oda)', tag: 'Oda', imageUrl: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=400&auto=format&fit=crop', prompt: 'Eiichiro Oda style. Exaggerated character proportions and expressions, incredibly dense background details, energetic lines, adventurous spirit.' },
+  { id: 'm4', category: '大師風格庫', title: '新海誠風格 (Makoto Shinkai)', tag: 'Shinkai', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop', prompt: 'Makoto Shinkai style. Hyper-realistic intricate background art, lens flares, volumetric lighting, high saturation transparent colors, profound emotional atmosphere.' },
+  { id: 'm5', category: '大師風格庫', title: 'CLAMP 風格', tag: 'CLAMP', imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=400&auto=format&fit=crop', prompt: 'CLAMP manga style. Slender and elongated character proportions, highly decorative outfits, flowing hair, magical and romantic atmosphere, delicate lines.' },
+  { id: 'm6', category: '大師風格庫', title: '荒木飛呂彥風格 (Hirohiko Araki)', tag: 'Araki / JoJo', imageUrl: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?q=80&w=400&auto=format&fit=crop', prompt: 'JoJo\'s Bizarre Adventure style by Hirohiko Araki. Iconic posing (JoJo-dachi), bold psychedelic colors, high-fashion clothing, sharp facial contours, visual onomatopoeia.' },
+  { id: 'm7', category: '大師風格庫', title: '井上雄彥風格 (Takehiko Inoue)', tag: 'Inoue', imageUrl: 'https://images.unsplash.com/photo-1502133480873-37d90c1950a4?q=80&w=400&auto=format&fit=crop', prompt: 'Takehiko Inoue realism style. Masterful ink brush strokes, precise human anatomy and movement, deep emotional facial expressions, skilled use of white space.' },
+  { id: 'm8', category: '大師風格庫', title: '京都動畫風格 (KyoAni)', tag: 'KyoAni', imageUrl: 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=400&auto=format&fit=crop', prompt: 'Kyoto Animation style. Exquisite character art, soft pastel colors, subtle micro-expressions, focus on eyes, airy and delicate atmosphere.' },
+  { id: 'm9', category: '大師風格庫', title: 'ufotable 風格', tag: 'ufotable', imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop', prompt: 'ufotable movie-quality style. Digital particle effects, cinematic lighting, intense battle scenes, seamless 2D/3D fusion, dramatic shadows.' },
+  { id: 'm10', category: '大師風格庫', title: 'TRIGGER 風格', tag: 'TRIGGER', imageUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400&auto=format&fit=crop', prompt: 'Studio TRIGGER style. Extreme dynamic distortion, high contrast color palettes, bold thick lines, imaginative mecha and silhouettes, high energy.' },
+  { id: 'm11', category: '大師風格庫', title: '三浦建太郎風格 (Kentaro Miura)', tag: 'Miura', imageUrl: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=400&auto=format&fit=crop', prompt: 'Kentaro Miura Berserk style. Dark fantasy aesthetic, incredibly detailed ink hatching on armor and monsters, strong volume and weight, epic composition.' },
+  { id: 'm12', category: '大師風格庫', title: '高橋留美子風格 (Rumiko Takahashi)', tag: 'Takahashi', imageUrl: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?q=80&w=400&auto=format&fit=crop', prompt: 'Rumiko Takahashi style. Rounded faces, large expressive eyes, classic 90s anime look, vibrant comedic expressions, blend of mundane and fantasy.' },
+  { id: 'm13', category: '大師風格庫', title: '手塚治虫風格 (Osamu Tezuka)', tag: 'Tezuka', imageUrl: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?q=80&w=400&auto=format&fit=crop', prompt: 'Osamu Tezuka classic style. Simplified curves, iconic large round eyes, expressive character silhouettes, symbolic retro anime aesthetic.' },
+  { id: 'm14', category: '大師風格庫', title: '大友克洋風格 (Katsuhiro Otomo)', tag: 'Otomo', imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&auto=format&fit=crop', prompt: 'Katsuhiro Otomo Akira style. Realistic human proportions, dense urban background details, cinematic framing, mechanical precision, themes of destruction.' },
+  { id: 'm15', category: '大師風格庫', title: '松本大洋風格 (Taiyo Matsumoto)', tag: 'Matsumoto', imageUrl: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?q=80&w=400&auto=format&fit=crop', prompt: 'Taiyo Matsumoto style. Free and distorted lines, surreal compositions, raw emotional tension, unconventional perspective and hatching.' },
+  { id: 'm16', category: '大師風格庫', title: '天野喜孝風格 (Yoshitaka Amano)', tag: 'Amano', imageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=400&auto=format&fit=crop', prompt: 'Yoshitaka Amano ethereal style. Calligraphy-like flowing lines, dreamlike fantasy elements, intricate decorative patterns, slender elegant characters.' },
+  { id: 'm17', category: '大師風格庫', title: '弐瓶勉風格 (Tsutomu Nihei)', tag: 'Nihei', imageUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400&auto=format&fit=crop', prompt: 'Tsutomu Nihei BLAME! style. Massive cold architectural structures, post-apocalyptic desolation, biomechanical design, heavy black and white contrast.' },
+  { id: 'm18', category: '大師風格庫', title: '士郎正宗風格 (Masamune Shirow)', tag: 'Shirow', imageUrl: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400&auto=format&fit=crop', prompt: 'Masamune Shirow Ghost in the Shell style. Precise mechanical settings, strong female leads, cyberpunk aesthetic, detailed technology, clean complex lines.' },
+  { id: 'm19', category: '大師風格庫', title: '永野護風格 (Mamoru Nagano)', tag: 'Nagano', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=400&auto=format&fit=crop', prompt: 'Mamoru Nagano Five Star Stories style. Slender characters and Mortar Headd mecha, complex baroque-inspired design, fusion of gothic and art deco.' },
+  { id: 'm20', category: '大師風格庫', title: '渡邊信一郎風格 (Shinichiro Watanabe)', tag: 'Watanabe', imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', prompt: 'Shinichiro Watanabe Cowboy Bebop style. Cinematic realism, fusion of music-inspired vibes, fluid action choreography, cool mature atmosphere.' },
+  { id: 'm21', category: '大師風格庫', title: '湯淺政明風格 (Masaaki Yuasa)', tag: 'Yuasa', imageUrl: 'https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?q=80&w=400&auto=format&fit=crop', prompt: 'Masaaki Yuasa style. Free-spirited lines and distorted perspectives, vivid unconventional color schemes, stream-of-consciousness visual flow.' },
   { id: 'm22', category: '大師風格庫', title: '出水ぽすか風格 (Posuka Demizu)', tag: 'Demizu', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&auto=format&fit=crop', prompt: 'Posuka Demizu style. Detailed fantastical backgrounds, blend of fairy-tale and dark elements, characters with expressive slightly uneasy features.' },
   { id: 'm23', category: '大師風格庫', title: '貞本義行風格 (Yoshiyuki Sadamoto)', tag: 'Sadamoto', imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop', prompt: 'Yoshiyuki Sadamoto Evangelion style. Slender and chic character silhouettes, melancholic eyes, clean lines, soft muted color palettes.' },
-  { id: 'm24', category: '大師風格庫', title: '村田雄介風格 (Yusuke Murata)', tag: 'Murata', imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop', prompt: 'Yusuke Murata One Punch Man style. Master-level draftsmanship, fluid action sequences, sharp and precise anatomy, full and dense compositions.' },
+  { id: 'm24', category: '大師風格庫', title: '村田雄介風格 (Yusuke Murata)', tag: 'Murata', imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop', prompt: 'Yusuke Murata One Punch Man style. Master-level draftsmanship, fluid action sequences, sharp and precise anatomy, full dense compositions.' },
 
   // --- 玩具與手辦 ---
-  { id: 't1', category: '玩具與手辦', title: 'Nano Banana 3D 手辦', tag: '3D Figure', imageUrl: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?q=80&w=400&auto=format&fit=crop', prompt: 'Turn the person in the picture into a 1/7 scale commercialized figure, realistic style. Place the figure on a computer desk, using a circular transparent acrylic base.' },
-  { id: 't2', category: '玩具與手辦', title: 'Q版毛線娃娃', tag: 'Crochet', imageUrl: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?q=80&w=400&auto=format&fit=crop', prompt: 'A close-up photograph of a hand-crocheted yarn doll. Cute chibi image, vivid contrasting colors, rich yarn details. Warm wooden background.' },
+  { id: 't1', category: '玩具與手辦', title: 'Nano Banana 3D 手辦', tag: '3D Figure', imageUrl: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?q=80&w=400&auto=format&fit=crop', prompt: 'Turn the person into a 1/7 scale commercialized figure, in a realistic style. Place the figure on a computer desk, using a circular transparent acrylic base.' },
+  { id: 't2', category: '玩具與手辦', title: 'Q版毛線娃娃', tag: 'Crochet Chibi', imageUrl: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?q=80&w=400&auto=format&fit=crop', prompt: 'A close-up photograph of a hand-crocheted yarn doll. Cute chibi image, vivid contrasting colors, rich yarn textures. Warm wooden background.' },
   { id: 't3', category: '玩具與手辦', title: '透明扭蛋膠囊', tag: 'Gashapon', imageUrl: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?q=80&w=400&auto=format&fit=crop', prompt: 'A detailed transparent gashapon capsule diorama. Inside: the character in a stylish pose. Cinematic lighting, colored base.' },
-  { id: 't4', category: '玩具與手辦', title: '角色毛絨玩偶', tag: 'Plushie', imageUrl: 'https://images.unsplash.com/photo-1555448049-816dab5554c8?q=80&w=400&auto=format&fit=crop', prompt: 'A soft, high-quality plush toy with an oversized head, small body. Made of fuzzy fabric with visible stitching and embroidered features.' },
-  { id: 't5', category: '玩具與手辦', title: 'Funko Pop 手辦', tag: 'Funko', imageUrl: 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=400&auto=format&fit=crop', prompt: 'A 3D render of a chibi Funko Pop figure. Large head, boxed packaging style, studio lighting, white background.' },
+  { id: 't4', category: '玩具與手辦', title: '角色毛絨玩偶', tag: 'Plushie', imageUrl: 'https://images.unsplash.com/photo-1555448049-816dab5554c8?q=80&w=400&auto=format&fit=crop', prompt: 'A soft, high-quality plush toy with an oversized head, small body. Made of fuzzy fabric with visible stitching and embroidered facial features.' },
+  { id: 't5', category: '玩具與手辦', title: 'Funko Pop 手辦', tag: 'Funko Pop', imageUrl: 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=400&auto=format&fit=crop', prompt: 'A 3D render of a chibi Funko Pop figure. Large head, boxed packaging style. High detail, studio lighting, white background.' },
 
-  // --- 攝影風格 ---
-  { id: 'p1', category: '攝影風格', title: 'iPhone 自拍', tag: 'iPhone', imageUrl: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=400&auto=format&fit=crop', prompt: 'An ordinary and unremarkable iPhone selfie snapshot. Slight motion blur, uneven lighting, messy composition, realistic phone camera look.' },
-  { id: 'p2', category: '攝影風格', title: '吉卜力大自然', tag: 'Ghibli Photo', imageUrl: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=400&auto=format&fit=crop', prompt: 'Redraw this photo in Ghibli anime style. Watercolor textures, lush nature background, nostalgic atmosphere.' },
-  { id: 'p3', category: '攝影風格', title: 'Retro 寶麗來', tag: 'Polaroid', imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&auto=format&fit=crop', prompt: 'A Polaroid camera snapshot. Normal photo look, slight blur, flash lighting in a dark room. Vintage white borders.' },
-  { id: 'p4', category: '攝影風格', title: '電影感肖像', tag: 'Cinematic', imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop', prompt: 'Vertical portrait shot, stark cinematic lighting, intense contrast. Saturated crimson red background, low angle.' },
+  // --- 攝影與肖像 ---
+  { id: 'p1', category: '攝影風格', title: 'iPhone 自拍', tag: 'iPhone Selfie', imageUrl: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=400&auto=format&fit=crop', prompt: 'An ordinary and unremarkable iPhone selfie snapshot. Slight motion blur, uneven lighting, messy composition, realistic phone camera aesthetic.' },
+  { id: 'p2', category: '攝影風格', title: 'Retro 寶麗來', tag: 'Polaroid', imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&auto=format&fit=crop', prompt: 'A Polaroid camera snapshot. Normal photo look, slight blur, flash lighting in a dark room. White curtain background.' },
+  { id: 'p3', category: '攝影風格', title: '電影感肖像', tag: 'Cinematic', imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop', prompt: 'Vertical portrait shot, stark cinematic lighting, intense contrast. Saturated crimson red background, low angle.' },
 
-  // --- 藝術與技術 ---
-  { id: 'art1', category: '藝術風格', title: '水墨 / 墨繪', tag: 'Sumi-e', imageUrl: 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&w=400&auto=format&fit=crop', prompt: 'Traditional Japanese Sumi-e ink wash style. Expressive brush strokes, ink value gradations, zen-like focus, beautiful use of negative space.' },
-  { id: 'art2', category: '藝術風格', title: '像素藝術', tag: 'Pixel', imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', prompt: 'Retro 16-bit pixel art style. Limited color palette, blocky geometric details, nostalgic game aesthetic.' },
-  { id: 'art3', category: '藝術風格', title: '可愛 / Q版', tag: 'Chibi', imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop', prompt: 'Kawaii chibi style. 2-3 head body ratio, rounded soft lines, exaggerated cute expressions, bright cheerful colors.' },
+  // --- 藝術技術 ---
+  { id: 'art1', category: '藝術風格', title: '水墨 / 墨繪風格', tag: 'Sumi-e', imageUrl: 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&w=400&auto=format&fit=crop', prompt: 'Traditional Japanese Sumi-e ink wash style. Expressive brush strokes, ink value gradations, zen-like focus, beautiful use of negative space.' },
+  { id: 'art2', category: '藝術風格', title: '像素藝術風格', tag: 'Pixel Art', imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', prompt: 'Retro 16-bit pixel art style. Limited color palette, blocky geometric details, nostalgic game aesthetic.' },
+  { id: 'art3', category: '藝術風格', title: '可愛 / Q版風格', tag: 'Kawaii / Chibi', imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop', prompt: 'Kawaii chibi style. 2-3 head body ratio, rounded soft lines, exaggerated cute expressions, bright cheerful colors.' },
 
   // --- 圖片編輯 ---
-  { id: 'e1', category: '圖片編輯', title: '修改背景', tag: 'BG Edit', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop', prompt: 'Replace the background with a new description like beach or forest. Keep the main subject unchanged.' },
-  { id: 'e2', category: '圖片編輯', title: '表情修改', tag: 'Expression', imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop', prompt: 'Keep the person unchanged but change their facial expression to a big bright smile. Realistic details.' },
-  { id: 'e3', category: '圖片編輯', title: '線稿變彩圖', tag: 'Colorize', imageUrl: 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&w=400&auto=format&fit=crop', prompt: 'Convert line art into a fully colored and detailed image with realistic textures and shading.' },
-  { id: 'e4', category: '圖片編輯', title: '品質修復', tag: 'Enhance', imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', prompt: 'Enhance overall quality and detail. Increase resolution, sharpness, and texture clarity while preserving identity.' }
+  { id: 'e1', category: '圖片編輯', title: '修改背景', tag: 'Background Edit', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop', prompt: 'Replace the background with a new description like beach or forest. Keep the main subject unchanged.' },
+  { id: 'e2', category: '圖片編輯', title: '表情修改', tag: 'Expression Edit', imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop', prompt: 'Keep the person unchanged but change their facial expression to a big bright smile. Realistic details.' }
 ];
 
 export const NanoPromptsView: React.FC = () => {
@@ -73,6 +70,7 @@ export const NanoPromptsView: React.FC = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [isImportingUrl, setIsImportingUrl] = useState(false);
   
+  // Custom Prompts state (editable)
   const [customPrompts, setCustomPrompts] = useState<Record<string, string>>(
     PROMPT_DATA.reduce((acc, item) => ({ ...acc, [item.id]: item.prompt }), {})
   );
@@ -210,35 +208,36 @@ export const NanoPromptsView: React.FC = () => {
     <div className="w-full h-full overflow-y-auto bg-slate-50 scroll-smooth pb-24 relative">
       <div className="w-full max-w-7xl mx-auto p-4 lg:p-12 animate-[fadeIn_0.5s_ease-out]">
         
-        {/* Header */}
+        {/* Header Section */}
         <div className="mb-12 text-center">
           <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-sm font-bold mb-4 uppercase tracking-wider">
-            AI Magic Studio Pro
+            Gemini 3.0 Powered AI Magic Studio
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">🍌 Nano Banana 旗艦風格庫</h2>
           <p className="text-slate-500 max-w-3xl mx-auto text-lg leading-relaxed mb-10">
-            收錄 27 位動漫大師、玩具手辦、專業攝影等多重風格。您可以點擊預覽圖放大，或手動微調提示詞再生成。
+            集結 27 位動漫大師、玩具手辦、藝術水墨等多重風格。您可以點擊預覽圖放大，或<span className="text-orange-600 font-bold">手動修改每個風格的提示詞</span>再進行生成。
           </p>
 
           {/* Source Image View */}
           {userImage && (
             <div className="max-w-xl mx-auto mb-8 animate-[scaleIn_0.3s_ease-out]">
               <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-orange-100 relative group">
-                <p className="text-xs font-black text-orange-500 uppercase tracking-widest mb-4">Source Photo</p>
+                <p className="text-xs font-black text-orange-500 uppercase tracking-widest mb-4">當前處理照片 Source Photo</p>
                 <div 
                   className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 border-4 border-slate-50 flex items-center justify-center cursor-zoom-in"
                   onClick={() => setSelectedEnlarge({ url: userImage, title: '原始照片' })}
                 >
-                  <img src={userImage} className="max-w-full max-h-full object-contain" alt="Source" />
+                  <img src={userImage} className="max-w-full max-h-full object-contain" alt="Current Source" />
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition-all">更換照片</button>
+                  <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition-all shadow-md">更換照片</button>
                   <button onClick={handleClearImage} className="px-4 py-2 bg-rose-50 text-rose-500 rounded-xl text-xs font-bold hover:bg-rose-100 transition-all">清除</button>
                 </div>
               </div>
             </div>
           )}
 
+          {/* Upload Area */}
           {!userImage && (
             <div className="max-w-2xl mx-auto mb-12">
               <div className="bg-white rounded-[2.5rem] p-12 border-2 border-dashed border-slate-200 hover:border-orange-400 transition-all cursor-pointer group shadow-sm"
@@ -263,14 +262,14 @@ export const NanoPromptsView: React.FC = () => {
             </div>
           )}
 
-          {/* Categories */}
+          {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-2 mb-16">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-2xl font-bold text-xs transition-all ${
-                  activeCategory === cat ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-500 hover:bg-slate-100'
+                className={`px-6 py-2 rounded-2xl font-bold text-xs transition-all ${
+                  activeCategory === cat ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-100'
                 }`}
               >
                 {cat}
@@ -279,10 +278,10 @@ export const NanoPromptsView: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Style Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredData.map(item => (
-            <div key={item.id} className="group bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col">
+            <div key={item.id} className="group bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
               <div 
                 className="aspect-square relative overflow-hidden bg-slate-900 cursor-zoom-in"
                 onClick={() => setSelectedEnlarge({ url: generationResults[item.id] || item.imageUrl, title: item.title })}
@@ -301,16 +300,17 @@ export const NanoPromptsView: React.FC = () => {
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-center mb-3">
                   <h4 className="font-black text-slate-900 text-sm truncate pr-2">{item.title}</h4>
-                  <button onClick={() => resetPrompt(item.id)} className="text-[10px] text-slate-400 hover:text-orange-500 font-bold whitespace-nowrap">恢復預設</button>
+                  <button onClick={() => resetPrompt(item.id)} className="text-[10px] text-slate-400 hover:text-orange-500 font-bold whitespace-nowrap transition-colors">恢復預設</button>
                 </div>
                 <textarea 
                   value={customPrompts[item.id]}
                   onChange={(e) => handlePromptChange(item.id, e.target.value)}
-                  className="w-full h-20 p-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] text-slate-600 focus:ring-1 focus:ring-orange-400 outline-none resize-none mb-4 leading-relaxed"
+                  className="w-full h-20 p-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] text-slate-600 focus:ring-1 focus:ring-orange-400 outline-none resize-none mb-4 leading-relaxed transition-all"
+                  placeholder="編輯 AI 咒語..."
                 />
                 <div className="flex gap-2 mt-auto">
-                  <button onClick={() => handleCopy(item.id, customPrompts[item.id])} className="flex-1 py-2 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-bold">複製提示詞</button>
-                  <button onClick={() => handleTransform(item)} disabled={!userImage || loadingIds.has(item.id)} className={`flex-[2.5] py-2 rounded-lg text-[10px] font-black shadow-sm ${!userImage ? 'bg-slate-100 text-slate-300' : 'bg-slate-900 text-white hover:bg-orange-600'}`}>{loadingIds.has(item.id) ? '處理中' : '套用風格'}</button>
+                  <button onClick={() => handleCopy(item.id, customPrompts[item.id])} className="flex-1 py-2 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-bold hover:bg-slate-100">複製</button>
+                  <button onClick={() => handleTransform(item)} disabled={!userImage || loadingIds.has(item.id)} className={`flex-[2.5] py-2 rounded-lg text-[10px] font-black shadow-sm transition-all ${!userImage ? 'bg-slate-100 text-slate-300' : 'bg-slate-900 text-white hover:bg-orange-600 active:scale-95'}`}>{loadingIds.has(item.id) ? '處理中' : '套用風格'}</button>
                 </div>
               </div>
             </div>
@@ -318,7 +318,7 @@ export const NanoPromptsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox Modal */}
       {selectedEnlarge && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4 animate-[fadeIn_0.2s] cursor-zoom-out" onClick={() => setSelectedEnlarge(null)}>
           <div className="relative max-w-5xl max-h-full flex flex-col items-center gap-4 animate-[scaleIn_0.3s]" onClick={(e) => e.stopPropagation()}>

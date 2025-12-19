@@ -30,10 +30,20 @@ export default function App() {
   const handleStartDraw = () => {
     if (appMode === AppMode.GIFT_EXCHANGE) {
       const names = participants.split('\n').filter(n => n.trim());
-      const numberPrizes: Prize[] = names.map((_, i) => ({
-        id: `num-${i + 1}`,
-        name: `No. ${i + 1}`,
-      }));
+      
+      // Logic for 1-63 range excluding specific numbers
+      const excluded = [16, 22, 23, 42, 62];
+      const validPool = Array.from({ length: 63 }, (_, i) => i + 1)
+        .filter(num => !excluded.includes(num));
+
+      const numberPrizes: Prize[] = names.map((_, i) => {
+        // Use the valid pool number, fallback to index+100 if someone exceeds 58 participants
+        const giftNumber = validPool[i] || (i + 1); 
+        return {
+          id: `num-${giftNumber}`,
+          name: `No. ${giftNumber}`,
+        };
+      });
       setActiveSessionPrizes(numberPrizes);
     } else {
       setActiveSessionPrizes(prizes);
@@ -152,7 +162,7 @@ export default function App() {
         {/* Inner Footer */}
         {view !== AppState.STUDY_PLAN && view !== AppState.NANO_PROMPTS && (
           <footer className="py-8 text-center text-slate-400 text-sm mt-auto">
-            <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini AI</p>
+            <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini 3.0 AI</p>
           </footer>
         )}
       </main>

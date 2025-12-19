@@ -130,8 +130,8 @@ export const SetupView: React.FC<SetupViewProps> = ({
   if (appMode === AppMode.STANDARD) {
     canStart = participantCount > 0 && prizes.length > 0 && participantCount >= prizes.length;
   } else {
-    // Gift Exchange: Need at least 2 people to exchange
-    canStart = participantCount >= 2;
+    // Gift Exchange: Need at least 2 people to exchange, and no more than 58 valid slots
+    canStart = participantCount >= 2 && participantCount <= 58;
   }
 
   // Count how many items are using placeholders (to show appropriate button text)
@@ -154,7 +154,7 @@ export const SetupView: React.FC<SetupViewProps> = ({
               : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
           }`}
         >
-          🏆 Lucky Draw
+          🏆 幸運抽獎
         </button>
         <button
           onClick={() => setAppMode(AppMode.GIFT_EXCHANGE)}
@@ -164,7 +164,7 @@ export const SetupView: React.FC<SetupViewProps> = ({
               : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
           }`}
         >
-          🎁 Gift Exchange
+          🎁 交換禮物
         </button>
       </div>
 
@@ -172,15 +172,15 @@ export const SetupView: React.FC<SetupViewProps> = ({
         {/* Participants Column */}
         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 flex flex-col h-full min-h-[500px]">
           <div className="mb-4 flex justify-between items-baseline">
-            <h2 className="text-2xl font-bold text-slate-800">Participants</h2>
+            <h2 className="text-2xl font-bold text-slate-800">參與者名單</h2>
             <span className="text-sm font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-              Count: {participantCount}
+              人數: {participantCount}
             </span>
           </div>
-          <p className="text-slate-500 text-sm mb-4">Enter names separated by new lines.</p>
+          <p className="text-slate-500 text-sm mb-4">請輸入姓名，一行一個。</p>
           <textarea
             className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none transition-all text-slate-700 leading-relaxed"
-            placeholder="Alice&#10;Bob&#10;Charlie..."
+            placeholder="小明&#10;小華&#10;阿強..."
             value={participants}
             onChange={(e) => setParticipants(e.target.value)}
             spellCheck={false}
@@ -193,8 +193,8 @@ export const SetupView: React.FC<SetupViewProps> = ({
           {appMode === AppMode.STANDARD ? (
             <>
               <div className="mb-4">
-                <h2 className="text-2xl font-bold text-slate-800">Prizes</h2>
-                <p className="text-slate-500 text-sm mt-1">Add items to the prize pool.</p>
+                <h2 className="text-2xl font-bold text-slate-800">獎品清單</h2>
+                <p className="text-slate-500 text-sm mt-1">請加入要抽出的獎項。</p>
               </div>
 
               <div className="flex gap-2 mb-6">
@@ -203,18 +203,18 @@ export const SetupView: React.FC<SetupViewProps> = ({
                   value={newPrizeName}
                   onChange={(e) => setNewPrizeName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addPrize()}
-                  placeholder="e.g. Brand New Smartphone"
+                  placeholder="例如：iPhone 15 Pro"
                   className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                 />
                 <Button onClick={addPrize} disabled={!newPrizeName.trim()}>
-                  Add
+                  加入
                 </Button>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-3 mb-6 pr-1 custom-scrollbar">
                 {prizes.length === 0 ? (
                   <div className="text-center py-12 text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
-                    No prizes added yet.
+                    尚未加入獎品。
                   </div>
                 ) : (
                   prizes.map(prize => (
@@ -226,22 +226,30 @@ export const SetupView: React.FC<SetupViewProps> = ({
           ) : (
             /* GIFT EXCHANGE MODE INFO */
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-6">
-              <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center text-6xl shadow-inner">
+              <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center text-6xl shadow-inner animate-pulse">
                 🎁
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Number Assignment</h2>
-                <p className="text-slate-500 max-w-sm mx-auto">
-                  We will assign a unique number (1 to {Math.max(participantCount, 2)}) to each participant randomly.
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">禮物號碼自動分配</h2>
+                <p className="text-slate-500 max-w-sm mx-auto mb-4">
+                  系統將從有效號碼池中為參與者隨機分配禮物編號。
                 </p>
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-left space-y-2">
+                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">號碼規則說明</p>
+                   <ul className="text-sm text-slate-600 space-y-1">
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-pink-400 rounded-full"></span> 號碼範圍：1 ~ 63 號</li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-rose-400 rounded-full"></span> 排除空號：<span className="font-bold text-rose-500">16, 22, 23, 42, 62</span></li>
+                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> 有效容量：58 人</li>
+                   </ul>
+                </div>
               </div>
               
-              <div className="grid grid-cols-3 gap-3 w-full max-w-xs opacity-50">
-                <div className="bg-slate-100 rounded-lg h-12 flex items-center justify-center font-bold text-slate-400">1</div>
-                <div className="bg-slate-100 rounded-lg h-12 flex items-center justify-center font-bold text-slate-400">2</div>
-                <div className="bg-slate-100 rounded-lg h-12 flex items-center justify-center font-bold text-slate-400">3</div>
-                <div className="bg-slate-100 rounded-lg h-12 flex items-center justify-center font-bold text-slate-400">...</div>
-                <div className="bg-slate-100 rounded-lg h-12 flex items-center justify-center font-bold text-slate-400">N</div>
+              <div className="grid grid-cols-4 gap-2 w-full max-w-xs opacity-50">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+                  <div key={n} className="bg-slate-100 rounded-lg h-10 flex items-center justify-center font-bold text-slate-400 text-xs">
+                    {n === 16 || n === 22 || n === 23 ? '🚫' : `No.${n}`}
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -254,9 +262,9 @@ export const SetupView: React.FC<SetupViewProps> = ({
                 isLoading={isGenerating}
                 disabled={prizes.length === 0 || placeholderCount === 0}
                 className="flex-1"
-                title={placeholderCount === 0 ? "All images are already generated" : "Replace default patterns with AI images"}
+                title={placeholderCount === 0 ? "已完成所有圖片生成" : "將預設圖標替換為 AI 生成的獎品圖"}
               >
-                {placeholderCount > 0 ? `Generate ${placeholderCount} AI Images` : 'All Images Generated'}
+                {placeholderCount > 0 ? `生成 ${placeholderCount} 張 AI 圖片` : '圖片已全數生成'}
               </Button>
             )}
             
@@ -265,7 +273,7 @@ export const SetupView: React.FC<SetupViewProps> = ({
               disabled={!canStart}
               className={`flex-1 ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-200' : ''}`}
             >
-              {appMode === AppMode.STANDARD ? 'Start Lucky Draw' : 'Assign Numbers'}
+              {appMode === AppMode.STANDARD ? '開始抽獎' : '隨機分配編號'}
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-2">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
@@ -275,8 +283,8 @@ export const SetupView: React.FC<SetupViewProps> = ({
           {!canStart && (
              <p className="text-xs text-rose-500 mt-2 text-center">
                {appMode === AppMode.STANDARD 
-                 ? 'Need more participants than prizes!'
-                 : 'Need at least 2 participants for an exchange!'}
+                 ? (participantCount < prizes.length ? '參與者人數必須大於或等於獎品數量！' : '請輸入名單並加入獎品')
+                 : (participantCount > 58 ? '超過 58 人有效容量！' : '交換禮物至少需要 2 位參與者')}
              </p>
           )}
         </div>
