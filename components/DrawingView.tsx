@@ -47,7 +47,6 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
   const [isBatchShuffling, setIsBatchShuffling] = useState(false);
 
   // Computed
-  const allFinished = winners.length === prizes.length;
   const activePrize = prizes.find(p => p.id === activePrizeId);
   
   // ----------------------------------------------------------------
@@ -75,84 +74,55 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
   // ----------------------------------------------------------------
   // STANDARD WHEEL LOGIC
   // ----------------------------------------------------------------
-  const handleSelectPrize = (id: string) => {
-    if (winners.find(w => w.id === id)) return;
-    setActivePrizeId(id);
-    setWheelRotation(0); // Reset rotation for new draw
-    setWinnerModalOpen(false);
-  };
-
   const spinWheel = () => {
     if (isSpinning || availableParticipants.length === 0) return;
 
     setIsSpinning(true);
     
-    // 1. Pick a winner randomly
+    // 1. Pick winner
     const winnerIndex = Math.floor(Math.random() * availableParticipants.length);
     const winnerName = availableParticipants[winnerIndex];
     
-    // 2. Calculate rotation
-    // Each slice is (360 / count) degrees.
-    // Index 0 starts at 0 degrees (top, if we adjust container).
-    // We want the winner slice to land at the top pointer (270deg or -90deg usually, but let's simplify).
-    // Let's assume the wheel starts with index 0 at 0 degrees (3 o'clock).
-    // To simplify: CSS rotate(0) = 12 o'clock. 
-    // Slices are drawn starting from -90deg visually if we map properly?
-    // Let's rely on standard calculation:
-    // Slice Angle
+    // 2. LEFT SIDE (270 deg) Calibration
     const sliceAngle = 360 / availableParticipants.length;
-    // Target is to have the center of winner slice at the pointer (top = 0 deg in our css frame).
-    // Center of slice 'i' is at: i * sliceAngle + sliceAngle / 2.
-    // We need to rotate the wheel backwards so this point hits 0.
-    // New Rotation = Current Rotation + (Number of Spins * 360) + Delta.
-    // Delta = 360 - (Center of slice).
+    const sliceCenter = (winnerIndex + 0.5) * sliceAngle;
     
-    // Add extra spins (5 to 8 spins)
-    const spins = 5 + Math.floor(Math.random() * 3); 
-    const sliceCenter = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+    // Increased rotations for 8-second long spin (12-20 full rotations)
+    const extraSpins = (12 + Math.floor(Math.random() * 8)) * 360;
     
-    // Calculate total rotation needed. 
-    // We assume the initial 0 position puts index 0 at the top right? 
-    // Let's standardize: Rotate circle so that pointer points to angle 0.
-    // If we rotate the div by X degrees. The item at angle -X (or 360-X) will be at top.
+    const currentModulo = wheelRotation % 360;
+    const targetBase = 270 - sliceCenter;
     
-    const targetRotation = wheelRotation + (spins * 360) + (360 - sliceCenter);
+    // Natural variation within the slice
+    const randomOffset = (Math.random() - 0.5) * (sliceAngle * 0.8);
     
-    // Slight random offset within the slice to prevent landing on lines, limited to 80% of slice width
-    const offset = (Math.random() - 0.5) * (sliceAngle * 0.8);
-    
-    const finalRotation = targetRotation + offset;
+    const finalRotation = wheelRotation + extraSpins + (targetBase - currentModulo) + randomOffset;
 
     setWheelRotation(finalRotation);
 
-    // 3. Wait for animation to finish
-    // CSS transition is set to 4s cubic-bezier
+    // Duration increased to 8000ms (8 seconds) for maximum suspense
     setTimeout(() => {
         setIsSpinning(false);
         setCurrentWinnerName(winnerName);
         setWinnerModalOpen(true);
         
-        // Confetti
         confetti({
-          particleCount: 150,
-          spread: 70,
+          particleCount: 200,
+          spread: 90,
           origin: { y: 0.6 },
-          colors: ['#6366f1', '#a855f7', '#ec4899', '#facc15']
+          colors: ['#6366f1', '#a855f7', '#ec4899', '#facc15', '#10b981']
         });
 
-        // Save Winner
         if (activePrize) {
             const newWinnerEntry = { ...activePrize, winner: winnerName };
             setWinners(prev => [...prev, newWinnerEntry]);
-            
-            // Remove from pool
             setAvailableParticipants(prev => {
                 const newArr = [...prev];
                 newArr.splice(winnerIndex, 1);
                 return newArr;
             });
         }
-    }, 4000); // Must match CSS duration
+    }, 8000); 
   };
 
   const handleBackToList = () => {
@@ -166,10 +136,9 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
     if (total === 0) return null;
     
     const slices = [];
-    const radius = 50; // SVG coordinate space 100x100
+    const radius = 50; 
     const center = 50;
     
-    // If only 1 participant, full circle
     if (total === 1) {
         return (
             <g>
@@ -177,11 +146,10 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
                 <text 
                     x={center} y={center} 
                     fill="white" 
-                    fontSize="12" 
-                    fontWeight="bold" 
+                    fontSize="8" 
+                    fontWeight="900" 
                     textAnchor="middle" 
                     dominantBaseline="middle"
-                    transform={`rotate(-90, ${center}, ${center})`}
                 >
                     {availableParticipants[0]}
                 </text>
@@ -193,7 +161,6 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
         const startAngle = (i * 360) / total;
         const endAngle = ((i + 1) * 360) / total;
         
-        // Convert to radians, subtract 90deg to start at 12 o'clock
         const startRad = (startAngle - 90) * (Math.PI / 180);
         const endRad = (endAngle - 90) * (Math.PI / 180);
         
@@ -202,30 +169,28 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
         const x2 = center + radius * Math.cos(endRad);
         const y2 = center + radius * Math.sin(endRad);
         
-        // SVG Path command
         const d = `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`;
         
-        // Text position: average angle
         const midAngle = (startAngle + endAngle) / 2;
         const midRad = (midAngle - 90) * (Math.PI / 180);
-        // Place text at 65% radius
-        const tx = center + (radius * 0.65) * Math.cos(midRad);
-        const ty = center + (radius * 0.65) * Math.sin(midRad);
+        
+        const tx = center + (radius * 0.74) * Math.cos(midRad);
+        const ty = center + (radius * 0.74) * Math.sin(midRad);
 
         slices.push(
             <g key={i}>
-                <path d={d} fill={WHEEL_COLORS[i % WHEEL_COLORS.length]} stroke="white" strokeWidth="0.5" />
+                <path d={d} fill={WHEEL_COLORS[i % WHEEL_COLORS.length]} stroke="rgba(255,255,255,0.3)" strokeWidth="0.08" />
                 <text 
                     x={tx} y={ty} 
                     fill="white" 
-                    fontSize={total > 12 ? "4" : total > 8 ? "5" : "7"}
-                    fontWeight="bold" 
+                    fontSize={total > 40 ? "1.8" : total > 20 ? "2.6" : "3.6"}
+                    fontWeight="900" 
                     textAnchor="middle" 
                     dominantBaseline="middle"
-                    transform={`rotate(${midAngle}, ${tx}, ${ty})`}
-                    style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.3)' }}
+                    transform={`rotate(${midAngle + 90}, ${tx}, ${ty})`}
+                    style={{ textShadow: '0px 1px 3px rgba(0,0,0,0.5)', letterSpacing: '0.01em' }}
                 >
-                    {availableParticipants[i].length > 8 ? availableParticipants[i].substring(0, 8) + '..' : availableParticipants[i]}
+                    {availableParticipants[i]}
                 </text>
             </g>
         );
@@ -233,32 +198,24 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
     return slices;
   };
 
-  // ----------------------------------------------------------------
-  // RENDER: BATCH MODE
-  // ----------------------------------------------------------------
   if (isBatchMode) {
       return (
         <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-center justify-center min-h-[80vh]">
              <div className="text-center mb-10">
-                <h2 className="text-3xl font-black text-slate-800 mb-2">🎁 Gift Exchange Numbers</h2>
-                <p className="text-slate-500">Ready to assign numbers to all participants?</p>
+                <h2 className="text-3xl font-black text-slate-800 mb-2">🎁 交換禮物分配結果</h2>
+                <p className="text-slate-500">系統已完成隨機分配</p>
              </div>
 
              {!batchRevealed ? (
                  <div className="text-center space-y-8">
-                     <div className={`text-9xl transition-all duration-500 ${isBatchShuffling ? 'animate-bounce opacity-50' : ''}`}>
-                        🎲
-                     </div>
+                     <div className={`text-9xl transition-all duration-500 ${isBatchShuffling ? 'animate-bounce opacity-50' : ''}`}>🎲</div>
                      <Button 
                         onClick={startBatchDraw} 
                         disabled={isBatchShuffling}
                         className="bg-pink-600 hover:bg-pink-700 shadow-pink-200 text-xl px-12 py-4 rounded-2xl"
                      >
-                        {isBatchShuffling ? 'Shuffling...' : 'Shuffle & Reveal All'}
+                        {isBatchShuffling ? '分配中...' : '立即開始分配'}
                      </Button>
-                     <div className="block mt-4">
-                         <button onClick={onBack} className="text-slate-400 text-sm hover:underline">Cancel</button>
-                     </div>
                  </div>
              ) : (
                  <div className="w-full">
@@ -274,10 +231,8 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
                              </div>
                          ))}
                      </div>
-                     <div className="flex justify-center gap-4">
-                        <Button onClick={() => onFinish(winners)} variant="primary" className="bg-pink-600 hover:bg-pink-700">
-                            Finish & Save
-                        </Button>
+                     <div className="flex justify-center">
+                        <Button onClick={() => onFinish(winners)} variant="primary" className="bg-pink-600 hover:bg-pink-700">完成並儲存</Button>
                      </div>
                  </div>
              )}
@@ -285,141 +240,62 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
       );
   }
 
-  // ----------------------------------------------------------------
-  // RENDER: PRIZE POOL (STANDARD)
-  // ----------------------------------------------------------------
-  if (!activePrizeId) {
-    return (
-      <div className="w-full max-w-6xl mx-auto p-4 sm:p-6 flex flex-col h-full">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-            <div className="text-center sm:text-left">
-                <h2 className="text-3xl font-bold text-slate-800">Prize Pool</h2>
-                <p className="text-slate-500">Select a prize to draw the winner</p>
-            </div>
-            <div className="flex gap-3">
-                 <button onClick={onBack} className="text-slate-400 hover:text-slate-600 px-4 font-medium transition-colors">
-                    Cancel Draw
-                 </button>
-                 {allFinished ? (
-                     <Button onClick={() => onFinish(winners)} className="animate-bounce">
-                        Show Final Results
-                     </Button>
-                 ) : (
-                    <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl text-sm font-semibold">
-                       {prizes.length - winners.length} prizes left
-                    </div>
-                 )}
-            </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {prizes.map(prize => {
-                const winner = winners.find(w => w.id === prize.id);
-                return (
-                    <div 
-                        key={prize.id}
-                        onClick={() => !winner && handleSelectPrize(prize.id)}
-                        className={`
-                            relative group rounded-2xl overflow-hidden border transition-all duration-300
-                            ${winner 
-                                ? 'bg-slate-50 border-indigo-200 opacity-90' 
-                                : 'bg-white border-slate-200 hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 cursor-pointer'
-                            }
-                        `}
-                    >
-                        {/* Card Image */}
-                        <div className="aspect-video bg-slate-100 relative overflow-hidden">
-                            {prize.imageUrl ? (
-                                <img src={prize.imageUrl} alt={prize.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-4xl">🎁</div>
-                            )}
-                            
-                            {winner && (
-                                <div className="absolute inset-0 bg-indigo-900/60 flex items-center justify-center backdrop-blur-[1px]">
-                                    <div className="text-center">
-                                        <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Winner</p>
-                                        <span className="bg-white text-indigo-700 px-4 py-1.5 rounded-full font-bold shadow-lg block">
-                                            {winner.winner}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
-                            
-                            {!winner && (
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                    <span className="opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all bg-white text-slate-900 font-semibold px-4 py-2 rounded-full shadow-lg">
-                                        Draw Now
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                        
-                        <div className="p-4">
-                            <h3 className={`font-bold truncate mb-1 ${winner ? 'text-indigo-900' : 'text-slate-800'}`}>
-                                {prize.name}
-                            </h3>
-                            {winner ? (
-                                <div className="flex items-center gap-2 text-indigo-600 text-sm">
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    <span className="font-medium">Complete</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 text-slate-400 group-hover:text-indigo-500 transition-colors text-sm">
-                                    <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" /></svg>
-                                    <span className="font-medium">Ready to start</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
-      </div>
-    );
-  }
-
-  // ----------------------------------------------------------------
-  // RENDER: SINGLE WHEEL DRAW (STANDARD)
-  // ----------------------------------------------------------------
   return (
-    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full p-4 overflow-hidden relative">
+    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full p-4 overflow-hidden relative bg-slate-50">
       
       {/* Back Button */}
       <button 
         onClick={handleBackToList}
-        className="absolute top-4 left-4 sm:top-8 sm:left-8 z-20 flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm text-slate-500 hover:text-slate-800 transition-colors"
+        className="absolute top-4 left-4 sm:top-8 sm:left-8 z-30 flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md text-slate-500 hover:text-indigo-600 transition-all"
       >
         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" /></svg>
-        <span className="font-medium">Back</span>
+        <span className="font-bold">返回獎項</span>
       </button>
 
       {/* Prize Header */}
-      <div className="mb-6 text-center z-10 max-w-lg">
-          <div className="inline-block bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-2">
-            Drawing For
+      <div className="mb-10 text-center z-10 max-w-lg">
+          <div className="inline-block bg-indigo-600 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 shadow-lg shadow-indigo-200">
+            LUCKY DRAW
           </div>
-          <h2 className="text-3xl font-black text-slate-800 drop-shadow-sm">{activePrize?.name}</h2>
+          <h2 className="text-4xl font-black text-slate-900 drop-shadow-sm">{activePrize?.name}</h2>
           {activePrize?.imageUrl && (
-            <div className="w-20 h-20 mx-auto mt-4 rounded-xl overflow-hidden shadow-lg border-2 border-white">
+            <div className="w-24 h-24 mx-auto mt-4 rounded-2xl overflow-hidden shadow-2xl border-4 border-white rotate-3">
                 <img src={activePrize.imageUrl} alt="" className="w-full h-full object-cover" />
             </div>
           )}
       </div>
 
       {/* THE WHEEL CONTAINER */}
-      <div className="relative w-[320px] h-[320px] sm:w-[450px] sm:h-[450px]">
-        {/* Pointer */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 z-20">
-            <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-slate-800 drop-shadow-xl"></div>
+      <div className="relative w-[340px] h-[340px] sm:w-[600px] sm:h-[600px] animate-[scaleIn_0.5s_ease-out]">
+        
+        {/* SLEEK CLOCK HAND POINTER (LEFT SIDE) */}
+        <div className="absolute top-1/2 -left-12 sm:-left-20 -translate-y-1/2 z-40 flex items-center">
+            <div className="relative">
+                <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_10px_15px_rgba(0,0,0,0.3)]">
+                   <path d="M95 20L15 5L5 20L15 35L95 20Z" fill="url(#hand_gradient)" stroke="white" strokeWidth="1.5"/>
+                   <path d="M95 20L80 17.5V22.5L95 20Z" fill="white" fillOpacity="0.8"/>
+                   <circle cx="10" cy="20" r="8" fill="#1E293B" stroke="white" strokeWidth="1.5"/>
+                   <circle cx="10" cy="20" r="3" fill="#6366F1"/>
+                   
+                   <defs>
+                      <linearGradient id="hand_gradient" x1="5" y1="20" x2="95" y2="20" gradientUnits="userSpaceOnUse">
+                         <stop stopColor="#0F172A"/>
+                         <stop offset="0.5" stopColor="#334155"/>
+                         <stop offset="1" stopColor="#0F172A"/>
+                      </linearGradient>
+                   </defs>
+                </svg>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-10 bg-indigo-500/20 blur-xl animate-pulse"></div>
+            </div>
         </div>
 
-        {/* Spinning SVG */}
+        {/* Spinning SVG - SUSPENSE ANIMATION (8s duration + steep ease-out) */}
         <div 
-            className="w-full h-full rounded-full shadow-2xl border-4 border-white bg-white overflow-hidden"
+            className="w-full h-full rounded-full shadow-[0_0_120px_rgba(99,102,241,0.2)] border-[16px] border-white bg-white overflow-hidden relative ring-1 ring-slate-200"
             style={{ 
                 transform: `rotate(${wheelRotation}deg)`,
-                transition: isSpinning ? 'transform 4s cubic-bezier(0.2, 0, 0.2, 1)' : 'none'
+                // 8 seconds duration with a curve that is very slow at the end (cubic-bezier(0.1, 0, 0, 1))
+                transition: isSpinning ? 'transform 8s cubic-bezier(0.1, 0, 0, 1)' : 'none'
             }}
         >
             <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -427,40 +303,49 @@ export const DrawingView: React.FC<DrawingViewProps> = ({
             </svg>
         </div>
 
-        {/* Center Knob */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center z-10 border-4 border-slate-100">
-            <div className="text-2xl">✨</div>
+        {/* Center Decorative Knob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center justify-center z-20 border-[12px] border-slate-50">
+            <div className="text-6xl animate-[bounce_2s_infinite] select-none">🏆</div>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="mt-10 z-10">
+      <div className="mt-14 z-10 flex flex-col items-center gap-4">
         <Button 
             onClick={spinWheel} 
             disabled={isSpinning || availableParticipants.length === 0}
-            className="px-12 py-4 text-xl shadow-xl shadow-indigo-200"
+            className="px-24 py-7 text-3xl font-black shadow-2xl shadow-indigo-300 rounded-2xl transition-all hover:scale-105 active:scale-95 bg-slate-900 hover:bg-indigo-600 group"
         >
-            {isSpinning ? 'Spinning...' : 'Spin the Wheel!'}
+            {isSpinning ? '緊張時刻...！' : (
+                <span className="flex items-center gap-3">
+                    啟動輪盤 <svg className="w-8 h-8 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                </span>
+            )}
         </Button>
+        <div className="flex flex-col items-center gap-1">
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] flex items-center gap-3">
+              <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+              緩慢停下時請屏息以待
+          </p>
+          <p className="text-indigo-400 text-[9px] font-bold">中獎者將精準對準左側劍指針</p>
+        </div>
       </div>
 
-      {/* Winner Modal/Overlay */}
+      {/* Winner Modal */}
       {winnerModalOpen && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-[fadeIn_0.2s]">
-            <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center transform scale-110 animate-[bounceIn_0.5s]">
-                <div className="text-6xl mb-4">🏆</div>
-                <h3 className="text-slate-500 font-medium uppercase tracking-widest text-sm mb-2">The Winner Is</h3>
-                <div className="text-4xl font-black text-indigo-600 mb-8 break-words leading-tight">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-[fadeIn_0.3s]">
+            <div className="bg-white p-12 rounded-[4rem] shadow-[0_40px_120px_rgba(0,0,0,0.6)] max-w-sm w-full text-center transform animate-[scaleIn_0.4s_cubic-bezier(0.34,1.56,0.64,1)] border-t-8 border-indigo-600">
+                <div className="text-8xl mb-6 drop-shadow-lg">🎉</div>
+                <h3 className="text-slate-400 font-black uppercase tracking-[0.2em] text-[10px] mb-3">CONGRATULATIONS</h3>
+                <p className="text-indigo-600 font-bold mb-1">幸運兒降臨</p>
+                <div className="text-5xl font-black text-slate-900 mb-12 break-words leading-tight px-2">
                     {currentWinnerName}
                 </div>
                 
                 <div className="flex flex-col gap-3">
-                    <Button onClick={handleBackToList} className="w-full">
-                        Next Prize
+                    <Button onClick={handleBackToList} className="w-full py-5 rounded-3xl shadow-xl bg-indigo-600 hover:bg-indigo-700 text-lg">
+                        接受榮耀
                     </Button>
-                    <button onClick={() => setWinnerModalOpen(false)} className="text-slate-400 text-sm hover:underline">
-                        Close & Stay Here
-                    </button>
                 </div>
             </div>
         </div>
