@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
 import { SetupView } from './components/SetupView';
 import { DrawingView } from './components/DrawingView';
 import { ResultsView } from './components/ResultsView';
 import { DashboardView } from './components/DashboardView';
 import { NanoPromptsView } from './components/NanoPromptsView';
+import { StudyPlanView } from './components/StudyPlanView';
+import { BaziFortuneView } from './components/BaziFortuneView';
 import { Prize, AppState, AppMode } from './types';
 
 export default function App() {
@@ -13,8 +16,6 @@ export default function App() {
   const [participants, setParticipants] = useState<string>('');
   const [prizes, setPrizes] = useState<Prize[]>([]);
   const [winners, setWinners] = useState<Prize[]>([]);
-
-  // Used for Gift Exchange to hold the temporary number prizes
   const [activeSessionPrizes, setActiveSessionPrizes] = useState<Prize[]>([]);
 
   const handleSelectTool = (toolName: string) => {
@@ -24,20 +25,19 @@ export default function App() {
       setView(AppState.STUDY_PLAN);
     } else if (toolName === 'NANO_PROMPTS') {
       setView(AppState.NANO_PROMPTS);
+    } else if (toolName === 'BAZI_FORTUNE') {
+      setView(AppState.BAZI_FORTUNE);
     }
   };
 
   const handleStartDraw = () => {
     if (appMode === AppMode.GIFT_EXCHANGE) {
       const names = participants.split('\n').filter(n => n.trim());
-      
-      // Logic for 1-63 range excluding specific numbers
       const excluded = [16, 22, 23, 42, 62];
       const validPool = Array.from({ length: 63 }, (_, i) => i + 1)
         .filter(num => !excluded.includes(num));
 
       const numberPrizes: Prize[] = names.map((_, i) => {
-        // Use the valid pool number, fallback to index+100 if someone exceeds 58 participants
         const giftNumber = validPool[i] || (i + 1); 
         return {
           id: `num-${giftNumber}`,
@@ -67,14 +67,15 @@ export default function App() {
 
   const getSubTitle = () => {
     if (view === AppState.DASHBOARD) return null;
-    if (view === AppState.STUDY_PLAN) return '智慧考前複習計畫';
+    if (view === AppState.STUDY_PLAN) return '考試複習計畫';
     if (view === AppState.NANO_PROMPTS) return 'Nano Banana 提示詞';
+    if (view === AppState.BAZI_FORTUNE) return '八字流年運勢';
     return '幸運抽獎';
   };
 
   return (
     <div className="h-screen w-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900 flex flex-col overflow-hidden">
-      {/* Header - Fixed Height */}
+      {/* Header */}
       <header className="bg-white/80 backdrop-blur-md shrink-0 z-50 border-b border-slate-100 h-16">
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={handleGoHome}>
@@ -90,7 +91,6 @@ export default function App() {
               )}
             </h1>
           </div>
-          
           <div className="flex items-center gap-4">
              {view !== AppState.DASHBOARD && (
                 <button 
@@ -108,11 +108,8 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className={`flex-1 w-full ${(view === AppState.STUDY_PLAN || view === AppState.NANO_PROMPTS) ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-        {view === AppState.DASHBOARD && (
-          <DashboardView onSelectTool={handleSelectTool} />
-        )}
-
+      <main className={`flex-1 w-full ${(view === AppState.STUDY_PLAN || view === AppState.NANO_PROMPTS || view === AppState.BAZI_FORTUNE) ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        {view === AppState.DASHBOARD && <DashboardView onSelectTool={handleSelectTool} />}
         {view === AppState.SETUP && (
           <SetupView 
             participants={participants}
@@ -124,7 +121,6 @@ export default function App() {
             setAppMode={setAppMode}
           />
         )}
-
         {view === AppState.DRAWING && (
           <DrawingView 
             participants={participants.split('\n').filter(n => n.trim())}
@@ -134,35 +130,15 @@ export default function App() {
             isBatchMode={appMode === AppMode.GIFT_EXCHANGE}
           />
         )}
+        {view === AppState.FINISHED && <ResultsView winners={winners} onReset={handleReset} />}
+        {view === AppState.STUDY_PLAN && <StudyPlanView />}
+        {view === AppState.NANO_PROMPTS && <div className="w-full h-full overflow-y-auto bg-slate-50"><NanoPromptsView /></div>}
+        {view === AppState.BAZI_FORTUNE && <BaziFortuneView />}
 
-        {view === AppState.FINISHED && (
-          <ResultsView 
-            winners={winners}
-            onReset={handleReset}
-          />
-        )}
-
-        {view === AppState.STUDY_PLAN && (
-          <div className="w-full h-full bg-white animate-[fadeIn_0.5s_ease-out]">
-            <iframe 
-              src="https://study-plan-9vz7.vercel.app/" 
-              className="w-full h-full border-none"
-              title="智慧考前複習計畫"
-              allow="clipboard-write"
-            />
-          </div>
-        )}
-
-        {view === AppState.NANO_PROMPTS && (
-          <div className="w-full h-full overflow-y-auto bg-slate-50">
-            <NanoPromptsView />
-          </div>
-        )}
-
-        {/* Inner Footer */}
-        {view !== AppState.STUDY_PLAN && view !== AppState.NANO_PROMPTS && (
+        {/* Footer */}
+        {view !== AppState.STUDY_PLAN && view !== AppState.NANO_PROMPTS && view !== AppState.BAZI_FORTUNE && (
           <footer className="py-8 text-center text-slate-400 text-sm mt-auto">
-            <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Google Gemini 3.0 AI</p>
+            <p>K-R-Trainning Tools &copy; {new Date().getFullYear()} | Powered by Gemini 3.5 Flash & 2.5 Flash Image</p>
           </footer>
         )}
       </main>

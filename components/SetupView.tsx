@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Prize, AppMode } from '../types';
 import { Button } from './Button';
@@ -14,55 +15,27 @@ interface SetupViewProps {
   setAppMode: (mode: AppMode) => void;
 }
 
-// Generate a festive placeholder image (Data URI)
 const getPlaceholderImage = (id: string) => {
-  // Simple hash to generate consistent random properties
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
     hash = id.charCodeAt(i) + ((hash << 5) - hash);
   }
-  
-  // Random Hue for Gradient
   const hue = Math.abs(hash) % 360;
   const color1 = `hsl(${hue}, 85%, 95%)`;
   const color2 = `hsl(${(hue + 40) % 360}, 85%, 88%)`;
-  
-  // Random Prize Icon
-  const icons = ['🎁', '🎁', '🎁', '🎀', '🏆', '💎', '👑', '🎉', '🧧', '🧸', '🎮'];
+  const icons = ['🎁', '🎀', '🏆', '💎', '👑', '🎉', '🧧', '🧸', '🎮'];
   const icon = icons[Math.abs(hash) % icons.length];
-
-  // Decorative Elements (Confetti/Shapes)
   const decorations = Array.from({ length: 6 }).map((_, i) => {
      const x = (Math.abs(hash * (i + 1)) % 80) + 10;
      const y = (Math.abs(hash * (i + 2)) % 80) + 10;
      const size = (Math.abs(hash * (i + 3)) % 10) + 5;
-     const opacity = 0.3;
      const fill = `hsl(${(hue + i * 60) % 360}, 70%, 70%)`;
-     const isCircle = i % 2 === 0;
-     
-     return isCircle 
-       ? `<circle cx="${x}%" cy="${y}%" r="${size}" fill="${fill}" opacity="${opacity}" />`
-       : `<rect x="${x}%" y="${y}%" width="${size * 1.5}" height="${size * 1.5}" fill="${fill}" opacity="${opacity}" transform="rotate(45, ${x}, ${y})" />`;
+     return i % 2 === 0 
+       ? `<circle cx="${x}%" cy="${y}%" r="${size}" fill="${fill}" opacity="0.3" />`
+       : `<rect x="${x}%" y="${y}%" width="${size * 1.5}" height="${size * 1.5}" fill="${fill}" opacity="0.3" transform="rotate(45, ${x}, ${y})" />`;
   }).join('');
-  
-  const svg = `
-    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="grad_${id}" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${color1}" />
-          <stop offset="100%" stop-color="${color2}" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="200" fill="url(#grad_${id})" />
-      ${decorations}
-      <circle cx="100" cy="100" r="60" fill="white" fill-opacity="0.4" />
-      <text x="100" y="115" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif" font-size="90" text-anchor="middle" dominant-baseline="middle">${icon}</text>
-    </svg>
-  `;
-  
-  // Encode SVG to Base64 (handling Unicode for emojis)
-  const base64 = btoa(unescape(encodeURIComponent(svg)));
-  return `data:image/svg+xml;base64,${base64}`;
+  const svg = `<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="grad_${id}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${color1}" /><stop offset="100%" stop-color="${color2}" /></linearGradient></defs><rect width="200" height="200" fill="url(#grad_${id})" />${decorations}<circle cx="100" cy="100" r="60" fill="white" fill-opacity="0.4" /><text x="100" y="115" font-family="sans-serif" font-size="90" text-anchor="middle" dominant-baseline="middle">${icon}</text></svg>`;
+  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
 };
 
 export const SetupView: React.FC<SetupViewProps> = ({
@@ -76,18 +49,15 @@ export const SetupView: React.FC<SetupViewProps> = ({
 }) => {
   const [newPrizeName, setNewPrizeName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [genProgress, setGenProgress] = useState(0);
 
   const addPrize = () => {
     if (!newPrizeName.trim()) return;
-    
     const id = crypto.randomUUID();
-    // Generate a festive SVG placeholder
-    const randomPatternUrl = getPlaceholderImage(id);
-
     const newPrize: Prize = {
       id: id,
       name: newPrizeName.trim(),
-      imageUrl: randomPatternUrl
+      imageUrl: getPlaceholderImage(id)
     };
     setPrizes(prev => [...prev, newPrize]);
     setNewPrizeName('');
@@ -98,195 +68,89 @@ export const SetupView: React.FC<SetupViewProps> = ({
   };
 
   const generateImages = async () => {
-    setIsGenerating(true);
-    
-    // Target prizes that have no image OR have placeholder image (SVG or DiceBear)
     const prizesToUpdate = prizes.filter(p => 
       !p.imageUrl || 
-      p.imageUrl.includes('api.dicebear.com') ||
       p.imageUrl.includes('image/svg+xml')
     );
-    
-    const updates = await Promise.all(
-      prizesToUpdate.map(async (prize) => {
-        const url = await generatePrizeImage(prize.name);
-        return { id: prize.id, url };
-      })
-    );
+    if (prizesToUpdate.length === 0) return;
 
-    setPrizes(prev => prev.map(p => {
-      const update = updates.find(u => u.id === p.id);
-      return update && update.url ? { ...p, imageUrl: update.url } : p;
-    }));
+    setIsGenerating(true);
+    setGenProgress(0);
+    
+    // 改為循序生成，避免同時過多請求
+    for (let i = 0; i < prizesToUpdate.length; i++) {
+      const prize = prizesToUpdate[i];
+      const url = await generatePrizeImage(prize.name);
+      if (url) {
+        setPrizes(prev => prev.map(p => p.id === prize.id ? { ...p, imageUrl: url } : p));
+      }
+      setGenProgress(Math.round(((i + 1) / prizesToUpdate.length) * 100));
+    }
 
     setIsGenerating(false);
+    setGenProgress(0);
   };
 
   const participantList = participants.split('\n').filter(n => n.trim());
-  const participantCount = participantList.length;
+  const canStart = appMode === AppMode.STANDARD 
+    ? participantList.length > 0 && prizes.length > 0 && participantList.length >= prizes.length
+    : participantList.length >= 2 && participantList.length <= 58;
 
-  // Validation Logic
-  let canStart = false;
-  if (appMode === AppMode.STANDARD) {
-    canStart = participantCount > 0 && prizes.length > 0 && participantCount >= prizes.length;
-  } else {
-    // Gift Exchange: Need at least 2 people to exchange, and no more than 58 valid slots
-    canStart = participantCount >= 2 && participantCount <= 58;
-  }
-
-  // Count how many items are using placeholders (to show appropriate button text)
-  const placeholderCount = prizes.filter(p => 
-    !p.imageUrl || 
-    p.imageUrl.includes('api.dicebear.com') ||
-    p.imageUrl.includes('image/svg+xml')
-  ).length;
+  const placeholderCount = prizes.filter(p => !p.imageUrl || p.imageUrl.includes('image/svg+xml')).length;
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 lg:p-8 flex flex-col items-center">
-      
-      {/* Mode Switcher */}
       <div className="bg-slate-200/50 p-1.5 rounded-2xl flex gap-1 mb-8 shadow-inner">
-        <button
-          onClick={() => setAppMode(AppMode.STANDARD)}
-          className={`px-6 py-2.5 rounded-xl font-bold transition-all ${
-            appMode === AppMode.STANDARD 
-              ? 'bg-white text-indigo-600 shadow-md' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-          }`}
-        >
-          🏆 幸運抽獎
-        </button>
-        <button
-          onClick={() => setAppMode(AppMode.GIFT_EXCHANGE)}
-          className={`px-6 py-2.5 rounded-xl font-bold transition-all ${
-            appMode === AppMode.GIFT_EXCHANGE
-              ? 'bg-white text-pink-600 shadow-md' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-          }`}
-        >
-          🎁 交換禮物
-        </button>
+        <button onClick={() => setAppMode(AppMode.STANDARD)} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${appMode === AppMode.STANDARD ? 'bg-white text-indigo-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}>🏆 幸運抽獎</button>
+        <button onClick={() => setAppMode(AppMode.GIFT_EXCHANGE)} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-white text-pink-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}>🎁 交換禮物</button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-        {/* Participants Column */}
         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 flex flex-col h-full min-h-[500px]">
           <div className="mb-4 flex justify-between items-baseline">
             <h2 className="text-2xl font-bold text-slate-800">參與者名單</h2>
-            <span className="text-sm font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-              人數: {participantCount}
-            </span>
+            <span className="text-sm font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">人數: {participantList.length}</span>
           </div>
-          <p className="text-slate-500 text-sm mb-4">請輸入姓名，一行一個。</p>
-          <textarea
-            className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none transition-all text-slate-700 leading-relaxed"
-            placeholder="小明&#10;小華&#10;阿強..."
-            value={participants}
-            onChange={(e) => setParticipants(e.target.value)}
-            spellCheck={false}
-          />
+          <textarea className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:ring-2 focus:ring-indigo-500 outline-none resize-none text-slate-700" placeholder="小明&#10;小華..." value={participants} onChange={(e) => setParticipants(e.target.value)} spellCheck={false} />
         </div>
 
-        {/* Prizes / Exchange Info Column */}
         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 flex flex-col h-full min-h-[500px]">
-          
           {appMode === AppMode.STANDARD ? (
             <>
-              <div className="mb-4">
-                <h2 className="text-2xl font-bold text-slate-800">獎品清單</h2>
-                <p className="text-slate-500 text-sm mt-1">請加入要抽出的獎項。</p>
-              </div>
-
+              <div className="mb-4"><h2 className="text-2xl font-bold text-slate-800">獎品清單</h2></div>
               <div className="flex gap-2 mb-6">
-                <input
-                  type="text"
-                  value={newPrizeName}
-                  onChange={(e) => setNewPrizeName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addPrize()}
-                  placeholder="例如：iPhone 15 Pro"
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                />
-                <Button onClick={addPrize} disabled={!newPrizeName.trim()}>
-                  加入
-                </Button>
+                <input type="text" value={newPrizeName} onChange={(e) => setNewPrizeName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addPrize()} placeholder="例如：iPhone 15" className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none" />
+                <Button onClick={addPrize} disabled={!newPrizeName.trim()}>加入</Button>
               </div>
-
               <div className="flex-1 overflow-y-auto space-y-3 mb-6 pr-1 custom-scrollbar">
-                {prizes.length === 0 ? (
-                  <div className="text-center py-12 text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
-                    尚未加入獎品。
-                  </div>
-                ) : (
-                  prizes.map(prize => (
-                    <PrizeItem key={prize.id} prize={prize} onRemove={removePrize} />
-                  ))
-                )}
+                {prizes.length === 0 ? <div className="text-center py-12 text-slate-400 border-2 border-dashed rounded-2xl">尚未加入獎品。</div> : prizes.map(prize => <PrizeItem key={prize.id} prize={prize} onRemove={removePrize} />)}
               </div>
             </>
           ) : (
-            /* GIFT EXCHANGE MODE INFO */
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-6">
-              <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center text-6xl shadow-inner animate-pulse">
-                🎁
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">禮物號碼自動分配</h2>
-                <p className="text-slate-500 max-w-sm mx-auto mb-4">
-                  系統將從有效號碼池中為參與者隨機分配禮物編號。
-                </p>
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-left space-y-2">
-                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">號碼規則說明</p>
-                   <ul className="text-sm text-slate-600 space-y-1">
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-pink-400 rounded-full"></span> 號碼範圍：1 ~ 63 號</li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-rose-400 rounded-full"></span> 排除空號：<span className="font-bold text-rose-500">16, 22, 23, 42, 62</span></li>
-                      <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> 有效容量：58 人</li>
-                   </ul>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-4 gap-2 w-full max-w-xs opacity-50">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-                  <div key={n} className="bg-slate-100 rounded-lg h-10 flex items-center justify-center font-bold text-slate-400 text-xs">
-                    {n === 16 || n === 22 || n === 23 ? '🚫' : `No.${n}`}
-                  </div>
-                ))}
-              </div>
+              <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center text-6xl shadow-inner animate-pulse">🎁</div>
+              <h2 className="text-2xl font-bold text-slate-800">禮物號碼自動分配</h2>
+              <div className="bg-slate-50 rounded-2xl p-4 border text-left text-sm text-slate-600">有效容量：58 人 (排除 16, 22, 23, 42, 62)</div>
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100 mt-auto">
-            {appMode === AppMode.STANDARD && (
-              <Button 
-                variant="secondary" 
-                onClick={generateImages} 
-                isLoading={isGenerating}
-                disabled={prizes.length === 0 || placeholderCount === 0}
-                className="flex-1"
-                title={placeholderCount === 0 ? "已完成所有圖片生成" : "將預設圖標替換為 AI 生成的獎品圖"}
-              >
-                {placeholderCount > 0 ? `生成 ${placeholderCount} 張 AI 圖片` : '圖片已全數生成'}
-              </Button>
+          <div className="space-y-3 pt-4 border-t mt-auto">
+            {isGenerating && (
+              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div className="bg-indigo-600 h-full transition-all duration-500" style={{ width: `${genProgress}%` }}></div>
+              </div>
             )}
-            
-            <Button 
-              onClick={onStartDraw} 
-              disabled={!canStart}
-              className={`flex-1 ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-200' : ''}`}
-            >
-              {appMode === AppMode.STANDARD ? '開始抽獎' : '隨機分配編號'}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-2">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-              </svg>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              {appMode === AppMode.STANDARD && (
+                <Button variant="secondary" onClick={generateImages} isLoading={isGenerating} disabled={prizes.length === 0 || placeholderCount === 0} className="flex-1">
+                  {isGenerating ? `生成中 ${genProgress}%` : placeholderCount > 0 ? `生成 ${placeholderCount} 張 AI 圖片` : '圖片已完成'}
+                </Button>
+              )}
+              <Button onClick={onStartDraw} disabled={!canStart} className={`flex-1 ${appMode === AppMode.GIFT_EXCHANGE ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-200' : ''}`}>
+                {appMode === AppMode.STANDARD ? '開始抽獎' : '隨機分配編號'}
+              </Button>
+            </div>
           </div>
-          
-          {!canStart && (
-             <p className="text-xs text-rose-500 mt-2 text-center">
-               {appMode === AppMode.STANDARD 
-                 ? (participantCount < prizes.length ? '參與者人數必須大於或等於獎品數量！' : '請輸入名單並加入獎品')
-                 : (participantCount > 58 ? '超過 58 人有效容量！' : '交換禮物至少需要 2 位參與者')}
-             </p>
-          )}
         </div>
       </div>
     </div>

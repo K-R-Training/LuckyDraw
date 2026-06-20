@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface DashboardViewProps {
@@ -20,12 +21,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">專用小工具</span>
         </h1>
         <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-          您的個人化工具箱。選擇下方工具開始使用，提升效率與樂趣。
+          整合最新 Gemini 3.0 Pro 與 2.5 影像技術。選擇下方工具開始使用，提升效率與樂趣。
         </p>
       </div>
 
       {/* Tools Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
         
         {/* Tool 1: Lucky Draw */}
         <div 
@@ -51,7 +52,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 2: Smart Study Plan */}
+        {/* Tool 2: Bazi Fortune */}
+        <div 
+          onClick={() => onSelectTool('BAZI_FORTUNE')}
+          className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-rose-200/50 border border-slate-100 hover:border-rose-100 transition-all duration-300 cursor-pointer overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <svg className="w-32 h-32 text-rose-600 transform rotate-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+            </svg>
+          </div>
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-700 to-red-900 flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform">
+              <span className="text-3xl">🔮</span>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-rose-700 transition-colors">
+              八字流年運勢
+            </h3>
+            <p className="text-slate-500 mb-6 leading-relaxed">
+              輸入生辰八字，由 AI 推算命格五行、流年大運。深度分析事業、愛情與學業。
+            </p>
+            <div className="flex items-center text-rose-700 font-bold group-hover:translate-x-2 transition-transform">
+              立即排盤 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Tool 3: Exam Review Plan */}
         <div 
           onClick={() => onSelectTool('STUDY_PLAN')}
           className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-emerald-200/50 border border-slate-100 hover:border-emerald-100 transition-all duration-300 cursor-pointer overflow-hidden"
@@ -66,10 +93,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
               <span className="text-3xl">📝</span>
             </div>
             <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors">
-              智慧考前複習計畫
+              考試複習計畫
             </h3>
             <p className="text-slate-500 mb-6 leading-relaxed">
-              AI 助你規劃最高效的考前衝刺！輸入考科與剩餘天數，自動生成專屬複習進度表。
+              專為 K-R-Trainning 學員打造。由 Gemini 3 Pro 自動生成高效複習與衝刺表。
             </p>
             <div className="flex items-center text-emerald-600 font-bold group-hover:translate-x-2 transition-transform">
               開始規劃 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
@@ -77,7 +104,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
           </div>
         </div>
 
-        {/* Tool 3: Nano Banana Prompts */}
+        {/* Tool 4: Nano Banana Prompts */}
         <div 
           onClick={() => onSelectTool('NANO_PROMPTS')}
           className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:shadow-orange-200/50 border border-slate-100 hover:border-orange-100 transition-all duration-300 cursor-pointer overflow-hidden"
@@ -95,10 +122,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectTool }) =>
               Nano Banana 提示詞
             </h3>
             <p className="text-slate-500 mb-6 leading-relaxed">
-              精選 Nano Banana (Gemini 2.5 Flash Image) 常用提示詞，涵蓋多種藝術風格，點擊即複製。
+              精選 Nano Banana 影像模型提示詞，打造動漫大師風格、Q 版手辦照片。
             </p>
             <div className="flex items-center text-orange-600 font-bold group-hover:translate-x-2 transition-transform">
-              查看詞庫 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              進入實驗室 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </div>
           </div>
         </div>

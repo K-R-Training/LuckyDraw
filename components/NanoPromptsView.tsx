@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { transformImageStyle } from '../services/geminiService';
 
@@ -69,6 +70,7 @@ export const NanoPromptsView: React.FC = () => {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [isImportingUrl, setIsImportingUrl] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   
   // Custom Prompts state (editable)
   const [customPrompts, setCustomPrompts] = useState<Record<string, string>>(
@@ -77,6 +79,9 @@ export const NanoPromptsView: React.FC = () => {
 
   const [selectedEnlarge, setSelectedEnlarge] = useState<{url: string, title: string} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handlePromptChange = (id: string, newText: string) => {
     setCustomPrompts(prev => ({ ...prev, [id]: newText }));
@@ -149,6 +154,51 @@ export const NanoPromptsView: React.FC = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // Camera Functions
+  const openCamera = async () => {
+    setIsCameraOpen(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, 
+        audio: false 
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('無法開啟相機，請檢查權限設定。');
+      setIsCameraOpen(false);
+    }
+  };
+
+  const closeCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+    setIsCameraOpen(false);
+    streamRef.current = null;
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        setUserImage(dataUrl);
+        setUserImageMime('image/jpeg');
+        setGenerationResults({});
+        closeCamera();
+      }
+    }
+  };
+
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
       const items = event.clipboardData?.items;
@@ -215,11 +265,11 @@ export const NanoPromptsView: React.FC = () => {
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">🍌 Nano Banana 旗艦風格庫</h2>
           <p className="text-slate-500 max-w-3xl mx-auto text-lg leading-relaxed mb-10">
-            集結 27 位動漫大師、玩具手辦、藝術水墨等多重風格。您可以點擊預覽圖放大，或<span className="text-orange-600 font-bold">手動修改每個風格的提示詞</span>再進行生成。
+            集結 27 位動漫大師、玩具手辦、藝術水墨等多重風格。您可以拍照、上傳或<span className="text-orange-600 font-bold">手動修改提示詞</span>再生成。
           </p>
 
           {/* Source Image View */}
-          {userImage && (
+          {userImage && !isCameraOpen && (
             <div className="max-w-xl mx-auto mb-8 animate-[scaleIn_0.3s_ease-out]">
               <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-orange-100 relative group">
                 <p className="text-xs font-black text-orange-500 uppercase tracking-widest mb-4">當前處理照片 Source Photo</p>
@@ -231,25 +281,38 @@ export const NanoPromptsView: React.FC = () => {
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition-all shadow-md">更換照片</button>
+                  <button onClick={openCamera} className="flex-1 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition-all shadow-md flex items-center justify-center gap-1">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    重新拍照
+                  </button>
                   <button onClick={handleClearImage} className="px-4 py-2 bg-rose-50 text-rose-500 rounded-xl text-xs font-bold hover:bg-rose-100 transition-all">清除</button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Upload Area */}
-          {!userImage && (
+          {/* Upload & Camera Area */}
+          {!userImage && !isCameraOpen && (
             <div className="max-w-2xl mx-auto mb-12">
-              <div className="bg-white rounded-[2.5rem] p-12 border-2 border-dashed border-slate-200 hover:border-orange-400 transition-all cursor-pointer group shadow-sm"
-                   onClick={() => fileInputRef.current?.click()}>
-                <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-[2.5rem] p-10 border-2 border-dashed border-slate-200 hover:border-orange-400 transition-all cursor-pointer group shadow-sm flex flex-col items-center gap-4"
+                     onClick={() => fileInputRef.current?.click()}>
+                  <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
+                  <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                   </div>
-                  <p className="text-slate-900 font-black text-xl">點擊上傳照片或 Ctrl+V 貼上</p>
+                  <p className="text-slate-900 font-black text-lg">上傳或貼上照片</p>
+                </div>
+
+                <div className="bg-white rounded-[2.5rem] p-10 border-2 border-dashed border-slate-200 hover:border-orange-400 transition-all cursor-pointer group shadow-sm flex flex-col items-center gap-4"
+                     onClick={openCamera}>
+                  <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <p className="text-slate-900 font-black text-lg">開啟相機拍攝</p>
                 </div>
               </div>
+              
               <div className="mt-4 flex justify-center gap-2">
                  <button onClick={() => setShowUrlInput(!showUrlInput)} className="text-slate-400 text-xs font-bold hover:text-orange-500 transition-colors">使用網址導入圖片</button>
               </div>
@@ -259,6 +322,32 @@ export const NanoPromptsView: React.FC = () => {
                   <button onClick={handleUrlImport} disabled={isImportingUrl} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-bold">{isImportingUrl ? '載入中' : '載入'}</button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Camera View */}
+          {isCameraOpen && (
+            <div className="max-w-2xl mx-auto mb-12 animate-[scaleIn_0.3s_ease-out]">
+              <div className="bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl relative border-4 border-white shadow-orange-200/50">
+                <video ref={videoRef} autoPlay playsInline className="w-full aspect-video object-cover" />
+                <div className="absolute inset-0 flex flex-col justify-between p-6">
+                  <div className="flex justify-end">
+                    <button onClick={closeCamera} className="bg-black/50 text-white p-3 rounded-full hover:bg-black/80 transition-all">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </div>
+                  <div className="flex justify-center pb-4">
+                    <button 
+                      onClick={capturePhoto} 
+                      className="w-16 h-16 bg-white rounded-full border-4 border-orange-500 shadow-xl flex items-center justify-center active:scale-90 transition-transform group"
+                    >
+                      <div className="w-10 h-10 bg-orange-500 rounded-full group-hover:scale-95 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+                <canvas ref={canvasRef} className="hidden" />
+              </div>
+              <p className="mt-4 text-slate-400 text-xs font-bold uppercase tracking-widest">正在使用即時攝像頭</p>
             </div>
           )}
 

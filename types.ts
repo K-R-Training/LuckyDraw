@@ -1,3 +1,4 @@
+
 export interface Prize {
   id: string;
   name: string;
@@ -11,7 +12,8 @@ export enum AppState {
   DRAWING = 'DRAWING',
   FINISHED = 'FINISHED',
   STUDY_PLAN = 'STUDY_PLAN',
-  NANO_PROMPTS = 'NANO_PROMPTS'
+  NANO_PROMPTS = 'NANO_PROMPTS',
+  BAZI_FORTUNE = 'BAZI_FORTUNE'
 }
 
 export enum AppMode {
